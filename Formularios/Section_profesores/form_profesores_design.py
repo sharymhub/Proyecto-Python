@@ -663,10 +663,25 @@ class FormularioProfesoresDesign:
         self.Datos_personales = tk.Frame(self.cuerpo_seccion, background="white")
         self.Datos_personales.pack(padx=10, pady=(10, 5), fill=tk.BOTH, expand=True)
         
+        #Frame para boton editar 
+        self.frame_editar = tk.Frame(
+            self.Datos_personales, bg="red",
+        )
+        self.frame_editar.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        
+        btn_editar_profesor = CTkButton (
+            self.frame_editar,
+            text="Editar",
+            font=("Arial", 14),
+            border_color="white",
+            fg_color="white",
+            bg_color="red",
+            command=lambda: self.editar_profesor(tarjeta)
+        )
         
         # Frame de Imagen
         self.frame_imagen = tk.Frame(
-            self.Datos_personales, bg="white", width=100, height=100
+            self.Datos_personales, bg="white", width=400, height=400
         )
         self.frame_imagen.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         
