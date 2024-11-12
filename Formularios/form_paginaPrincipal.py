@@ -12,7 +12,9 @@ from config import (
 import util.util_ventana as util_window
 import util.util_imagenes as util_img
 from Formularios.form_usuarios_design import FormularioUsuariosDesign
-from Formularios.form_profesores_design import FormularioProfesoresDesign
+from Formularios.Section_profesores.form_profesores_design import (
+    FormularioProfesoresDesign,
+)
 
 
 class formulario(tk.Tk):
