@@ -61,7 +61,8 @@ class FormularioUsuariosDesign:
         )
         self.Btn_NuevoUsuario.image = icon
         self.Btn_NuevoUsuario.pack(side=tk.RIGHT, padx=10, pady=10)
-
+        
+    #///////////////////// CREAR NUEVO USUARIO //////////////////////
     def Crear_Nuevo_Usuario(self, modo="Nuevo "):
         self.Ventana_formulario_nuevo_usuario = tk.Toplevel()
         self.Ventana_formulario_nuevo_usuario.title(modo.capitalize() + "usuario")

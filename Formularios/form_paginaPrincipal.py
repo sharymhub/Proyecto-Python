@@ -34,7 +34,7 @@ class formulario(tk.Tk):
         # configuración inicial de la ventana
         self.title("GIE")
         self.iconbitmap("./Assets/colegio.ico")
-        w, h = 1024, 600
+        w, h = 1024,650
         util_window.centrar_ventana(self, w, h)
 
     def paneles(self):
