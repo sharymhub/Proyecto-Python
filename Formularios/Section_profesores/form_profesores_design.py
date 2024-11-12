@@ -190,7 +190,7 @@ class FormularioProfesoresDesign:
 
         # frame superior que contiene datos personales
         self.Datos_personales = tk.Frame(self.cuerpo_seccion, background="Black")
-        self.Datos_personales.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+        self.Datos_personales.pack(padx=10, pady=(10, 5), fill=tk.BOTH, expand=True)
         # Frame de Imagen
         self.frame_imagen = tk.Frame(self.Datos_personales, bg="white", width=100, height=100)
         self.frame_imagen.pack(side=tk.LEFT, padx=10, pady=10)
@@ -199,7 +199,7 @@ class FormularioProfesoresDesign:
         btn_cargar_imagen = CTkButton(self.frame_imagen, text="Cargar Foto", command=self.cargar_imagen)
         btn_cargar_imagen.pack(pady=5)
         # Frame con informacion academica
-        self.Datos_academicos = tk.Frame(self.cuerpo_seccion, background="Green")
+        self.Datos_academicos = tk.Frame(self.cuerpo_seccion, background="white")
         self.Datos_academicos.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
         
         # Frame de documentación
@@ -353,3 +353,108 @@ class FormularioProfesoresDesign:
         #                   text="Confirmar fecha",font=("Arial", 12), fg_color=COLOR_FONT_PURPLE, text_color="white", hover_color=COLOR_MENU_LATERAL, command=obtener_fecha)
         # boton.grid(row=7, column=0, columnspan=2, pady=10)
         
+        # //////////// Secion Datos Academicos //////////////
+        
+        self.label_informacion_academica = CTkLabel(self.Datos_academicos, font=("Arial", 22), text="Información Académica:",text_color=COLOR_FONT_PURPLE)
+        self.label_informacion_academica.grid (row=0 , column=0)
+        
+        self.Frame_datosAcademicos = tk.Frame(self.Datos_academicos, background="Gray")
+        self.Frame_datosAcademicos.grid(row=1 , column=0, padx=10, pady=5)
+        
+        #Grado a cargo 
+        self.label_grado_cargo = CTkLabel(
+            self.Frame_datosAcademicos,
+            font=("Arial", 14),
+            text="Grado a cargo:",
+            text_color=COLOR_FONT_BLACK,
+        )
+        self.label_grado_cargo.grid(column=0, row=0, padx=10, pady=2, sticky="w",)
+
+        self.entry_grado_cargo= CTkEntry(
+            self.Frame_datosAcademicos,
+            width=250,
+            border_color=COLOR_FONT_PURPLE,
+            fg_color="white",
+            text_color=COLOR_FONT_BLACK,
+            font=("Arial", 14),
+        )
+        self.entry_grado_cargo.grid(column=0, row=1, padx=10, pady=2, sticky="w")
+        
+        #Materias dictadas
+        self.label_Materias_dictadas = CTkLabel(
+            self.Frame_datosAcademicos,
+            font=("Arial", 14),
+            text="Tipo de documento:",
+            text_color=COLOR_FONT_BLACK,
+        )
+        self.label_Materias_dictadas.grid(column=1, row=0, padx=10, pady=2, sticky="w",)
+        
+        self.option_Materias_dictadas = CTkOptionMenu(
+            self.Frame_datosAcademicos,
+            values=["Matematicas", "Ingles", "Español"],
+            width=80,
+            fg_color="white",
+            button_color="white",
+            button_hover_color=COLOR_FONT_PURPLE,
+            dropdown_fg_color="white",
+            dropdown_hover_color=COLOR_FONT_PURPLE,
+            text_color=COLOR_FONT_BLACK,
+            dropdown_text_color=COLOR_FONT_BLACK,
+        )
+        self.option_Materias_dictadas.grid(column=1, row=1,padx=10, pady=2, sticky="w",)
+
+
+
+        # Contratado desde
+        self.label_fecha_contratacion = CTkLabel(
+            self.Frame_datosAcademicos,
+            font=("Arial", 14),
+            text="Grado a cargo:",
+            text_color=COLOR_FONT_BLACK,
+        )
+        self.label_fecha_contratacion.grid(column=2, row=0, padx=10, pady=2, sticky="w",)
+        
+        cal_fecha_contratacion = DateEntry(self.Frame_datosAcademicos, width=18, background=COLOR_FONT_WHITE, foreground=COLOR_FONT_BLACK, borderwidth=0, date_pattern='y-mm-dd', selectforeground=COLOR_FONT_WHITE, selectbackground=COLOR_FONT_PURPLE, font=("Arial", 10),)
+        cal_fecha_contratacion.grid(row=1, column=2, padx=10, pady=10, sticky="w")
+        
+        
+        # //////////// Secion Documentos //////////////
+        
+        self.label_Documentos = CTkLabel(self.documentos, font=("Arial", 22), text="Documentos:",text_color=COLOR_FONT_PURPLE)
+        self.label_Documentos.grid (row=0 , column=0)
+        
+        #CARGA DE DOCUMENTO DE IDENTIDAD
+        self.label_Documento_identidad = CTkLabel(
+            self.documentos,
+            font=("Arial", 14),
+            text="Documento de identidad",
+            text_color=COLOR_FONT_BLACK,
+        )
+        self.label_Documento_identidad.grid(column=0, row=1, padx=10, pady=2, sticky="w",)
+        
+        btn_cargar_documento_identidad = CTkButton(self.documentos, text="Cargar documento", command=self.cargar_imagen)
+        btn_cargar_documento_identidad.grid(column=1, row=1, pady=5, padx=50, sticky="E")
+        
+        #CARGA DE DIPLOMA
+        self.label_DIPLOMA = CTkLabel(
+            self.documentos,
+            font=("Arial", 14),
+            text="Diploma",
+            text_color=COLOR_FONT_BLACK,
+        )
+        self.label_DIPLOMA.grid(column=0, row=2, padx=10, pady=2, sticky="w",)
+        
+        btn_cargar_diploma = CTkButton(self.documentos, text="Cargar documento", command=self.cargar_imagen)
+        btn_cargar_diploma.grid(column=1, row=2, pady=5, padx=50, sticky="E")
+        
+        #CARGA DE ESPECIALIZACION
+        self.label_especializacion = CTkLabel(
+            self.documentos,
+            font=("Arial", 14),
+            text="Documento de identidad",
+            text_color=COLOR_FONT_BLACK,
+        )
+        self.label_especializacion.grid(column=0, row=3, padx=10, pady=2, sticky="w",)
+        
+        btn_cargar_especializacion = CTkButton(self.documentos, text="Cargar documento", command=self.cargar_imagen)
+        btn_cargar_especializacion.grid(column=1, row=3, pady=5, padx=50, sticky="E")
