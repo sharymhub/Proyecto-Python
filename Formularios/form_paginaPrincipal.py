@@ -15,6 +15,8 @@ from Formularios.form_usuarios_design import FormularioUsuariosDesign
 from Formularios.Section_profesores.form_profesores_design import (
     FormularioProfesoresDesign,
 )
+from Formularios.form_matriculas_design import FormMatriculasDesign
+from Formularios.form_Materias_design import FormularioMateriasDesign
 
 
 class formulario(tk.Tk):
@@ -34,7 +36,7 @@ class formulario(tk.Tk):
         # configuración inicial de la ventana
         self.title("GIE")
         self.iconbitmap("./Assets/colegio.ico")
-        w, h = 1024,650
+        w, h = 1024, 650
         util_window.centrar_ventana(self, w, h)
 
     def paneles(self):
@@ -99,9 +101,9 @@ class formulario(tk.Tk):
             ("Usuarios", self.buttonUsuarios, self.abrir_seccion_usuarios),
             ("Profesores", self.buttonProfesores, self.abrir_seccion_profesores),
             ("Horarios", self.buttonHorarios, self.abrir_seccion_usuarios),
-            ("Matriculas", self.buttonMatriculas, self.abrir_seccion_usuarios),
+            ("Matriculas", self.buttonMatriculas, self.abrir_seccion_matriculas),
             ("Estudiantes", self.buttonEstudiantes, self.abrir_seccion_usuarios),
-            ("Materias", self.buttonMaterias, self.abrir_seccion_usuarios),
+            ("Materias", self.buttonMaterias, self.abrir_seccion_materias),
         ]
 
         for text, button, comando in buttons_info:
@@ -171,3 +173,11 @@ class formulario(tk.Tk):
     def abrir_seccion_profesores(self):
         self.limpiar_panel(self.cuerpo_principal)
         FormularioProfesoresDesign(self.cuerpo_principal)
+
+    def abrir_seccion_matriculas(self):
+        self.limpiar_panel(self.cuerpo_principal)
+        FormMatriculasDesign(self.cuerpo_principal)
+    
+    def abrir_seccion_materias(self):
+        self.limpiar_panel(self.cuerpo_principal)
+        FormularioMateriasDesign(self.cuerpo_principal)
