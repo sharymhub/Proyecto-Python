@@ -43,7 +43,8 @@ class FormMatriculasDesign:
 
         # Sección de selección de grado
         lbl_grade_select = CTkLabel(
-            self.barra_superior, text="Seleccione el grado al cual desea matricular:",
+            self.barra_superior,
+            text="Seleccione el grado al cual desea matricular:",
             font=("Arial", 14),
             text_color=COLOR_FONT_BLACK,
         )
@@ -65,16 +66,20 @@ class FormMatriculasDesign:
             dropdown_text_color=COLOR_FONT_BLACK,
         )
         menu_grade.grid(row=2, column=0, padx=30, pady=5)
-        
+
         lbl_Numero_matriculados = CTkLabel(
-            self.barra_superior, text="Matriculados para este grado: 10/30",
-            font=("Arial", 16,),
+            self.barra_superior,
+            text="Matriculados para este grado: 10/30",
+            font=(
+                "Arial",
+                16,
+            ),
             text_color=COLOR_FONT_BLACK,
         )
         lbl_Numero_matriculados.grid(row=1, column=1, padx=10)
-        
+
         # Fecha de matrícula e inicio del año
-        self.label_fecha_Matricula= CTkLabel(
+        self.label_fecha_Matricula = CTkLabel(
             self.barra_superior,
             font=("Arial", 16, "bold"),
             text="Fecha de matricula:",
@@ -83,7 +88,7 @@ class FormMatriculasDesign:
         self.label_fecha_Matricula.grid(
             column=0,
             row=3,
-            padx=10,
+            padx=15,
             pady=2,
             sticky="w",
         )
@@ -99,19 +104,19 @@ class FormMatriculasDesign:
             selectbackground=COLOR_FONT_PURPLE,
             font=("Arial", 8),
         )
-        cal_fecha_Matricula.grid(row=4, column=0, padx=10, pady=10, sticky="w")
-        
+        cal_fecha_Matricula.grid(row=4, column=0, padx=15, pady=10, sticky="w")
+
         # Fecha de inicio del año
-        self.label_Inicio_Año= CTkLabel(
+        self.label_Inicio_Año = CTkLabel(
             self.barra_superior,
-            font=("Arial", 14, "bold" ),
+            font=("Arial", 14, "bold"),
             text="Fecha de Inicio del año:",
             text_color=COLOR_FONT_BLACK,
         )
         self.label_Inicio_Año.grid(
             column=1,
             row=3,
-            padx=10,
+            padx=15,
             pady=2,
             sticky="w",
         )
@@ -127,12 +132,12 @@ class FormMatriculasDesign:
             selectbackground=COLOR_FONT_PURPLE,
             font=("Arial", 8),
         )
-        cal_Inicio_año.grid(row=4, column=1, padx=10, pady=10, sticky="w")
-        
-        #Datos personales del estudiante
+        cal_Inicio_año.grid(row=4, column=1, padx=15, pady=10, sticky="w")
+
+        # Datos personales del estudiante
         self.Datos_personales = tk.Frame(self.panel_pricipal, background="white")
-        self.Datos_personales.pack(padx=10, pady=(10, 5), fill=tk.BOTH, expand=True)
-        
+        self.Datos_personales.pack(padx=10, pady=(10, 0), fill=tk.BOTH, expand=True)
+
         # Frame de Imagen
         self.frame_imagen = tk.Frame(
             self.Datos_personales, bg="white", width=100, height=100
@@ -141,14 +146,15 @@ class FormMatriculasDesign:
 
         # Botón para cargar imagen
         btn_cargar_imagen = CTkButton(
-            self.frame_imagen, text="Cargar Foto",
+            self.frame_imagen,
+            text="Cargar Foto",
         )
-        btn_cargar_imagen.pack(pady=5)
-        
+        btn_cargar_imagen.pack(pady=10)
+
         # Frame para información del texto
         self.texto_frame = CTkFrame(self.Datos_personales, fg_color="white")
         self.texto_frame.pack(side=tk.LEFT, fill=tk.BOTH, padx=10, expand=True)
-        
+
         # Nombre de estudiante
         self.nombre_label = CTkLabel(
             self.texto_frame,
@@ -160,7 +166,7 @@ class FormMatriculasDesign:
             column=0,
             row=0,
             sticky="w",
-            pady=(10,5),
+            pady=(10, 5),
         )
 
         self.entry_nombre = CTkEntry(
@@ -174,12 +180,12 @@ class FormMatriculasDesign:
         self.entry_nombre.grid(
             column=0,
             row=1,
-            padx=(0,10),
+            padx=(0, 10),
             pady=2,
             sticky="w",
         )
-        
-        # Nombre de estudiante
+
+        # Numero de identificación
         self.numero_identificacion = CTkLabel(
             self.texto_frame,
             font=("Arial", 14, "bold"),
@@ -190,7 +196,8 @@ class FormMatriculasDesign:
             column=1,
             row=0,
             sticky="w",
-            pady=(10,5),
+            padx=10,
+            pady=(10, 5),
         )
 
         self.entry_numero_identificación = CTkEntry(
@@ -204,15 +211,15 @@ class FormMatriculasDesign:
         self.entry_numero_identificación.grid(
             column=1,
             row=1,
-            padx=(0,10),
+            padx=10,
             pady=2,
             sticky="w",
         )
-        
+
         # Fecha de nacimiento
         self.Fecha_Nacimiento = CTkLabel(
             self.texto_frame,
-            font=("Arial", 16, "bold"),
+            font=("Arial", 14, "bold"),
             text="Fecha de nacimiento:",
             text_color=COLOR_FONT_BLACK,
         )
@@ -230,23 +237,24 @@ class FormMatriculasDesign:
             selectbackground=COLOR_FONT_PURPLE,
             font=("Arial", 10),
         )
-        cal.grid(row=3, column=0, padx=5, pady=10, sticky="w")
-        
-        # Nombre de estudiante
-        self.numero_identificacion = CTkLabel(
+        cal.grid(row=3, column=0, padx=5, pady=2, sticky="w")
+
+        # Lugar de nacimiento
+        self.Lugar_Nacimiento = CTkLabel(
             self.texto_frame,
             font=("Arial", 14, "bold"),
-            text="Numero de identificación:",
+            text="Lugar de nacimiento:",
             text_color=COLOR_FONT_BLACK,
         )
-        self.numero_identificacion.grid(
+        self.Lugar_Nacimiento.grid(
             column=1,
-            row=0,
+            row=2,
             sticky="w",
-            pady=(10,5),
+            padx=10,
+            pady=(10, 5),
         )
 
-        self.entry_numero_identificación = CTkEntry(
+        self.entry_Lugar_Nacimiento = CTkEntry(
             self.texto_frame,
             width=250,
             border_color=COLOR_FONT_PURPLE,
@@ -254,63 +262,168 @@ class FormMatriculasDesign:
             text_color=COLOR_FONT_BLACK,
             font=("Arial", 14),
         )
-        self.entry_numero_identificación.grid(
+        self.entry_Lugar_Nacimiento.grid(
             column=1,
-            row=1,
-            padx=(0,10),
+            row=3,
+            padx=2,
             pady=2,
-            sticky="w",
         )
-        # # Datos del estudiante
-        # lbl_student_data = CTkLabel(frame_content, text="Datos del estudiante:", font=("Arial", 14, "bold"))
-        # lbl_student_data.grid(row=4, column=0, columnspan=2, pady=10, sticky="w")
 
-        # fields = ["Nombre completo", "Número de identificación", "Fecha de nacimiento", "Lugar de Nacimiento", "Dirección", "Teléfono"]
-        # entries = {}
-        # for i, field in enumerate(fields):
-        #     lbl = CTkLabel(frame_content, text=field)
-        #     lbl.grid(row=5 + i, column=0, padx=10, sticky="w")
-        #     entries[field] = CTkEntry(frame_content)
-        #     entries[field].grid(row=5 + i, column=1, padx=10, pady=5)
+        # Género
+        self.lbl_gender = CTkLabel(
+            self.texto_frame,
+            text="Género:",
+            font=("Arial", 14, "bold"),
+            text_color=COLOR_FONT_BLACK,
+        )
+        self.lbl_gender.grid(row=4, column=0, pady=(10, 5), sticky="w")
 
-        # # Género
-        # lbl_gender = CTkLabel(frame_content, text="Género:")
-        # lbl_gender.grid(row=11, column=0, padx=20, sticky="w")
-        # gender_var = tk.StringVar(value="Femenino")
-        # gender_f = CTkRadioButton(frame_content, text="Femenino", variable=gender_var, value="Femenino")
-        # gender_f.grid(row=11, column=1, sticky="w")
-        # gender_m = CTkRadioButton(frame_content, text="Masculino", variable=gender_var, value="Masculino")
-        # gender_m.grid(row=11, column=1, sticky="e")
+        # Definir la variable de género
+        self.gender_var = tk.StringVar(value="Femenino")
 
-        # # Información Académica
-        # lbl_academic_info = CTkLabel(frame_content, text="Información Académica:", font=("Arial", 14, "bold"))
-        # lbl_academic_info.grid(row=12, column=0, columnspan=2, pady=10, sticky="w")
+        # Botón de radio para "Femenino"
+        self.gender_f = CTkRadioButton(
+            self.texto_frame,
+            text="Femenino",
+            variable=self.gender_var,
+            value="Femenino",
+            font=("Arial", 14),
+            text_color=COLOR_FONT_BLACK,  # Color del texto
+            hover_color=COLOR_MENU_CURSOR_ENCIMA,  # Color cuando el cursor pasa sobre el botón
+            fg_color=COLOR_FONT_PURPLE,  # Color de fondo del radio button
+            border_color=COLOR_FONT_BLACK,  # Color del borde
+            corner_radius=10,
+        )
+        self.gender_f.grid(row=5, column=0, sticky="w")
 
-        # # Tipo de estudiante (Nuevo o Antiguo)
-        # student_type = tk.StringVar(value="Nuevo")
-        # student_new = CTkRadioButton(frame_content, text="Nuevo", variable=student_type, value="Nuevo")
-        # student_new.grid(row=13, column=0, sticky="w", padx=10)
-        # student_old = CTkRadioButton(frame_content, text="Antiguo", variable=student_type, value="Antiguo")
-        # student_old.grid(row=13, column=1, sticky="w")
+        # Botón de radio para "Masculino"
+        self.gender_m = CTkRadioButton(
+            self.texto_frame,
+            text="Masculino",
+            variable=self.gender_var,
+            value="Masculino",
+            font=("Arial", 14),
+            text_color=COLOR_FONT_BLACK,  # Color del texto
+            hover_color=COLOR_MENU_CURSOR_ENCIMA,  # Color cuando el cursor pasa sobre el botón
+            fg_color=COLOR_FONT_PURPLE,  # Color de fondo del radio button
+            border_color=COLOR_FONT_BLACK,  # Color del borde
+            corner_radius=10,
+        )
+        self.gender_m.grid(row=5, column=0, padx=(0, 25), sticky="e")
 
-        # # Información Médica
-        # lbl_medical_info = CTkLabel(frame_content, text="Información Médica:", font=("Arial", 14, "bold"))
-        # lbl_medical_info.grid(row=15, column=0, columnspan=2, pady=10, sticky="w")
+        # Telefono
+        self.telefono = CTkLabel(
+            self.texto_frame,
+            font=("Arial", 14, "bold"),
+            text="Telefono:",
+            text_color=COLOR_FONT_BLACK,
+        )
 
-        # # Alergias y enfermedades crónicas
-        # allergies_var = tk.BooleanVar()
-        # chk_allergies = CTkCheckBox(frame_content, text="Alergias", variable=allergies_var)
-        # chk_allergies.grid(row=16, column=0, sticky="w", padx=10)
+        self.telefono.grid(
+            row=4,
+            column=1,
+            sticky="w",
+            padx=10,
+            pady=(10, 5),
+        )
 
-        # chronic_var = tk.BooleanVar()
-        # chk_chronic = CTkCheckBox(frame_content, text="Enfermedad crónica", variable=chronic_var)
-        # chk_chronic.grid(row=17, column=0, sticky="w", padx=10)
+        self.entry_telefono = CTkEntry(
+            self.texto_frame,
+            width=250,
+            text_color=COLOR_FONT_BLACK,
+            border_color=COLOR_FONT_PURPLE,
+            font=("Arial", 14),
+            fg_color="white",
+        )
 
-        # # Discapacidades físicas y mentales
-        # physical_disability_var = tk.BooleanVar()
-        # chk_physical = CTkCheckBox(frame_content, text="Discapacidad Física", variable=physical_disability_var)
-        # chk_physical.grid(row=16, column=1, sticky="w", padx=10)
+        self.entry_telefono.grid(row=5, column=1, padx=10, pady=2)
 
-        # mental_disability_var = tk.BooleanVar()
-        # chk_mental = CTkCheckBox(frame_content, text="Discapacidad Mental", variable=mental_disability_var)
-        # chk_mental.grid(row=17, column=1, sticky="w", padx=10)
+        # Dirección
+        self.direccion = CTkLabel(
+            self.texto_frame,
+            font=("Arial", 14, "bold"),
+            text="Dirección:",
+            text_color=COLOR_FONT_BLACK,
+        )
+        self.direccion.grid(row=6, column=0, sticky="w")
+
+        self.entry_direccion = CTkEntry(
+            self.texto_frame,
+            width=250,
+            text_color=COLOR_FONT_BLACK,
+            border_color=COLOR_FONT_PURPLE,
+            font=("Arial", 14),
+            fg_color="white",
+        )
+
+        self.entry_direccion.grid(row=7, column=0, padx=(0, 10), pady=2)
+
+        # <<<<<<<<<<<<<<<<<< INFORMACION ACADEMICA >>>>>>>>>>>>>>>>>>>
+        self.Datos_academicos = tk.Frame(self.panel_pricipal, background="white")
+        self.Datos_academicos.pack(padx=10, pady=(10, 5), fill=tk.BOTH, expand=True)
+
+        self.label_Informacion = CTkLabel(
+            self.Datos_academicos,
+            text="Información Académica",
+            font=("Arial", 28, "bold"),
+            text_color=COLOR_FONT_PURPLE,
+        )
+        self.label_Informacion.grid(row=0, column=0, padx=10, pady=5, sticky="w")
+
+        self.label_tipo_estudiante = CTkLabel(
+            self.Datos_academicos,
+            font=("Arial", 14, "bold"),
+            text="Tipo de estudiante:",
+            text_color=COLOR_FONT_BLACK,
+        )
+
+        self.label_tipo_estudiante.grid(row=1, column=0, padx=10, sticky="w")
+
+        # Definir la variable de tipo de estudiantes
+        self.student_var = tk.StringVar(value="Nuevo")
+
+        # Botón de radio para "Nuevo"
+        self.studentN_type = CTkRadioButton(
+            self.Datos_academicos,
+            text="Nuevo",
+            variable=self.student_var,
+            value="Femenino",
+            font=("Arial", 14),
+            text_color=COLOR_FONT_BLACK,  # Color del texto
+            hover_color=COLOR_MENU_CURSOR_ENCIMA,  # Color cuando el cursor pasa sobre el botón
+            fg_color=COLOR_FONT_PURPLE,  # Color de fondo del radio button
+            border_color=COLOR_FONT_BLACK,  # Color del borde
+            corner_radius=10,
+        )
+        self.studentN_type.grid(row=2, column=0, sticky="w", padx=(10, 25))
+
+        # Botón de radio para "ANTIGUO"
+        self.studentA_type = CTkRadioButton(
+            self.Datos_academicos,
+            text="Antiguo",
+            variable=self.student_var,
+            value="Masculino",
+            font=("Arial", 14),
+            text_color=COLOR_FONT_BLACK,  # Color del texto
+            hover_color=COLOR_MENU_CURSOR_ENCIMA,  # Color cuando el cursor pasa sobre el botón
+            fg_color=COLOR_FONT_PURPLE,  # Color de fondo del radio button
+            border_color=COLOR_FONT_BLACK,  # Color del borde
+            corner_radius=10,
+        )
+        self.studentA_type.grid(row=2, column=0, padx=(0, 25), sticky="e")
+
+        self.label_grado_cursado = CTkLabel(
+            self.Datos_academicos,
+            text="Ingrese el grado que estaba cursando:",
+            font=("Arial", 14, "bold"),
+            text_color=COLOR_FONT_BLACK,
+        )
+        self.label_grado_cursado.grid(row=3, column=0, sticky="w", padx=10)
+        self.entry_grado_cursado = CTkEntry(
+            self.Datos_academicos,
+            width=250,
+            text_color=COLOR_FONT_BLACK,
+            border_color=COLOR_FONT_PURPLE,
+            font=("Arial", 14),
+            fg_color="white",)
+        self.entry_grado_cursado.grid(row=4, column=0, padx=10, pady=(10, 5),sticky="w" )

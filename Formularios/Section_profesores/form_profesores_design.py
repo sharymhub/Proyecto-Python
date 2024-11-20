@@ -676,7 +676,7 @@ class FormularioProfesoresDesign:
         
         #Frame para boton editar 
         self.frame_editar = tk.Frame(
-            self.Datos_personales, bg="red",
+            self.Datos_personales, bg="white",
         )
         self.frame_editar.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
         
