@@ -17,6 +17,7 @@ from Formularios.Section_profesores.form_profesores_design import (
 )
 from Formularios.form_matriculas_design import FormMatriculasDesign
 from Formularios.form_Materias_design import FormularioMateriasDesign
+import subprocess
 
 
 class formulario(tk.Tk):
@@ -118,7 +119,7 @@ class formulario(tk.Tk):
             font_awesome,
             ancho_menu,
             alto_menu,
-            comando,
+            self.cerrarsesion,
         )
         # Se empaqueta el boton "Cerrar sesión" al final
         self.buttonCerrar_Sesion.pack(side=tk.BOTTOM, fill=tk.X, pady=10, padx=(10, 0))
@@ -181,3 +182,7 @@ class formulario(tk.Tk):
     def abrir_seccion_materias(self):
         self.limpiar_panel(self.cuerpo_principal)
         FormularioMateriasDesign(self.cuerpo_principal)
+        
+    def cerrarsesion(self):
+        subprocess.Popen(['python','Login.py'])
+        self.destroy()
