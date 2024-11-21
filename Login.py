@@ -1,6 +1,9 @@
 from customtkinter import CTk, CTkFrame, CTkEntry, CTkButton, CTkLabel, CTkCheckBox
 from tkinter import PhotoImage
 import tkinter as tk
+from tkinter import messagebox as mb
+import mysql.connector 
+import subprocess
 
 
 class Login:
@@ -53,6 +56,7 @@ class Login:
             text_color="Black",
             text="Usuario:",
         ).grid(columnspan=1, row=1, sticky="w", padx=90, pady=(0, 0))
+        self.Uusuario= tk.StringVar()
         self.Usuario = CTkEntry(
             self.frame,
             font=(
@@ -64,6 +68,7 @@ class Login:
             fg_color="white",
             width=220,
             height=40,
+            textvariable=self.Uusuario
         )
         self.Usuario.grid(columnspan=2, row=2, padx=4, pady=(0, 10))
 
@@ -73,6 +78,7 @@ class Login:
             text_color="Black",
             text="Contraseña:",
         ).grid(columnspan=1, row=3, sticky="w", padx=90, pady=(10, 0))
+        self.psswd= tk.StringVar()
         self.Contraseña = CTkEntry(
             self.frame,
             show="*",
@@ -82,6 +88,7 @@ class Login:
             fg_color="white",
             width=220,
             height=40,
+            textvariable=self.psswd
         )
         self.Contraseña.grid(columnspan=2, row=4, padx=4, pady=(0, 10))
         self.seleccion = tk.IntVar()
@@ -111,10 +118,60 @@ class Login:
             border_width=2,
             height=40,
             width=200,
+            command=self.validardatos
         )
         self.btn_ingresar.grid(columnspan=2, row=6, padx=6, pady=(10, 0))
 
         self.root.mainloop()
+        
+    def VentanaAdmin(self):
+        subprocess.Popen(['python','main.py'])
+    def validardatos(self):
+        #Obtener valores ingresados
+        usuario= self.Uusuario.get()
+        contraseña= self.psswd.get()
+        #Conectar a la base de datos
+        try:
+            conn= mysql.connector.connect(
+                    host='localhost',
+                    user='root',
+                    password='',
+                    database='giebd'
+                )
+                
+            cursor= conn.cursor()
+                
+                # Consulta SQL para obtener el nombre de usuario y la contraseña almacenada (encriptada)
+            query = "SELECT Nombreusuario, Contraseña, Rol FROM usuarios WHERE Nombreusuario = %s"
+            cursor.execute(query, (usuario,))
+                #buscar el usuario en la base de datos
+            user= cursor.fetchone()
+            
+            #Verificar si el usuario exite
+            if user:
+                stored_username= user[0]
+                stored_password= user[1] #Para contraseñas en texto plano
+                rol= user[2]
+                
+                #comprobar las contraseñas(sin cifrado)
+                if usuario == stored_username and contraseña == stored_password:
+                    mb.showinfo('Login exitoso',f'Bienvenido {usuario}')
+                    if rol == 'Administrador':
+                        self.VentanaAdmin()
+                        self.root.quit()
+                        self.root.destroy()
+                else:
+                    mb.showerror('Error de inicio de sesión', 'Contraseña o Usuario incorrecto')
+            else:
+                mb.showerror('Error de inicio de sesión', 'Usuario no existente')
+                
+        except mysql.connector.Error as error:
+            mb.showerror('Error de conexión', f'Error al conectar con la base de datos: {error}')
+            
+        finally:
+            if conn:
+                conn.close()   
+                
 
     def Mostrar_contraseña(self):
         if self.Contraseña.get() != "":

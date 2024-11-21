@@ -16,7 +16,8 @@ COLOR_BOTON_CANCELAR = "#757575"
 COLOR_BORDE_ENTRADA = "#8e44ad"
 COLOR_FONDO_TITULO = "#b39ddb"
 COLOR_TEXTO = "#000"
-
+from tkinter import messagebox as mb
+import mysql.connector
 
 class FormularioMateriasDesign:
 
