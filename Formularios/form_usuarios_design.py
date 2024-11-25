@@ -1,4 +1,5 @@
 import tkinter as tk
+
 from config import COLOR_CUERPO_PRINCIPAL, COLOR_MENU_LATERAL
 from customtkinter import (
     CTk,
@@ -9,6 +10,7 @@ from customtkinter import (
     CTkCheckBox,
     CTkOptionMenu,
 )
+import mysql.connector
 
 COLOR_CUERPO_PRINCIPAL = "#f5f5f5"
 COLOR_BOTON_AGREGAR = "#6a1b9a"
@@ -62,6 +64,12 @@ class FormularioUsuariosDesign:
         )
         self.Btn_NuevoUsuario.image = icon
         self.Btn_NuevoUsuario.pack(side=tk.RIGHT, padx=10, pady=10)
+        
+        
+        
+        
+      
+
 
     # ///////////////////// CREAR NUEVO USUARIO //////////////////////
     def Crear_Nuevo_Usuario(self, modo="Nuevo "):
