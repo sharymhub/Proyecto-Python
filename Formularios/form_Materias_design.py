@@ -108,10 +108,14 @@ class FormularioMateriasDesign:
             font=("Arial", 16, "bold"),
         )
         self.label_Grados_pertenecientes.pack(anchor="w", padx=20)
-        
+
         # Crear un frame para los checkboxes
-        frame_checkboxes = CTkFrame(self.Ventana_formulario_nuevo_usuario, fg_color="white")
-        frame_checkboxes.pack(padx=10, pady=10, fill="both")  # Empaqueta el frame principal
+        frame_checkboxes = CTkFrame(
+            self.Ventana_formulario_nuevo_usuario, fg_color="white"
+        )
+        frame_checkboxes.pack(
+            padx=10, pady=10, fill="both"
+        )  # Empaqueta el frame principal
 
         # Variables para los checkboxes
         Grado1 = tk.BooleanVar()
@@ -141,11 +145,15 @@ class FormularioMateriasDesign:
                 border_color=COLOR_BORDE_ENTRADA,  # Color del borde
                 checkmark_color=COLOR_CUERPO_PRINCIPAL,  # Color del check interno
             )
-            chk.grid(row=i // 2, column=i % 2, padx=10, pady=5, sticky="w")  # Distribución en dos columnas
+            chk.grid(
+                row=i // 2, column=i % 2, padx=10, pady=5, sticky="w"
+            )  # Distribución en dos columnas
 
         # Campo Cargo (opciones desplegables)
-        self.label_profesor_encargado= CTkLabel(
-            self.Ventana_formulario_nuevo_usuario, text="ID profesor encargado de la materia:", text_color=COLOR_TEXTO
+        self.label_profesor_encargado = CTkLabel(
+            self.Ventana_formulario_nuevo_usuario,
+            text="ID profesor encargado de la materia:",
+            text_color=COLOR_TEXTO,
         )
         self.label_profesor_encargado.pack(anchor="w", padx=20)
         self.option_profesor_encargado = CTkOptionMenu(
