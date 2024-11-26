@@ -175,7 +175,7 @@ class FormMatriculasDesign:
             date_pattern="y-mm-dd",
             selectforeground=COLOR_FONT_WHITE,
             selectbackground=COLOR_FONT_PURPLE,
-            font=("Arial", 8),
+            font=("Arial", 10),
             state="readonly",
         )
         cal_fecha_Matricula.grid(row=4, column=0, padx=15, pady=10, sticky="w")
@@ -204,7 +204,7 @@ class FormMatriculasDesign:
             date_pattern="y-mm-dd",
             selectforeground=COLOR_FONT_WHITE,
             selectbackground=COLOR_FONT_PURPLE,
-            font=("Arial", 8),
+            font=("Arial", 10),
             state="readonly",
         )
         cal_Inicio_año.grid(row=4, column=1, padx=15, pady=10, sticky="w")

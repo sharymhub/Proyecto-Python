@@ -191,3 +191,8 @@ class formulario(tk.Tk):
     def abrir_seccion_horarios(self):
         self.limpiar_panel(self.cuerpo_principal)
         FormHorariosDesign(self.cuerpo_principal)
+    
+    def cerrarsesion(self):
+        # Acciones para cerrar sesión, como limpiar datos de usuario o cerrar la ventana
+        print("Cerrando sesión...")
+        self.quit()  # Cierra la ventana

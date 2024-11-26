@@ -65,17 +65,12 @@ class FormularioUsuariosDesign:
         self.Btn_NuevoUsuario.image = icon
         self.Btn_NuevoUsuario.pack(side=tk.RIGHT, padx=10, pady=10)
         
-        
-        
-        
-      
-
 
     # ///////////////////// CREAR NUEVO USUARIO //////////////////////
     def Crear_Nuevo_Usuario(self, modo="Nuevo "):
         self.Ventana_formulario_nuevo_usuario = tk.Toplevel()
         self.Ventana_formulario_nuevo_usuario.title(modo.capitalize() + "usuario")
-        self.Ventana_formulario_nuevo_usuario.geometry("300x480+980+280")
+        self.Ventana_formulario_nuevo_usuario.geometry("300x480+1100+400")
         self.Ventana_formulario_nuevo_usuario.configure(bg="white")
 
         # Eliminar la barra de título y los controles de la ventana

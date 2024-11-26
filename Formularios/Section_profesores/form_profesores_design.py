@@ -30,6 +30,7 @@ datos_tarjetas = [
         "nombre": "Juanita Pérez",
         "grado": "Directora 10º A",
         "id": "01",
+        "tipo_documento" : "C.C",
         "imagen": "./Assets/Prueba 3.jpg",
         "detalle": "Juan es un estudiante destacado en matemáticas.",
         "numero_documento": "123456789",
@@ -44,6 +45,7 @@ datos_tarjetas = [
         "nombre": "Ana Gómez",
         "grado": "Directora 11º B",
         "id": "02",
+        "tipo_documento" : "C.E",
         "imagen": "./Assets/Prueba 3.jpg",
         "detalle": "Ana tiene un excelente rendimiento en ciencias.",
         "numero_documento": "987654321",
@@ -58,6 +60,7 @@ datos_tarjetas = [
         "nombre": "Carolina López",
         "grado": "Directora 12º C",
         "id": "03",
+        "tipo_documento" : "C.C",
         "imagen": "./Assets/Prueba 3.jpg",
         "detalle": "Carlos es un líder en actividades extracurriculares.",
         "numero_documento": "456789123",
@@ -461,7 +464,7 @@ class FormularioProfesoresDesign:
         )
         self.label_informacion_academica.grid(row=0, column=0)
 
-        self.Frame_datosAcademicos = tk.Frame(self.Datos_academicos, background="Gray")
+        self.Frame_datosAcademicos = tk.Frame(self.Datos_academicos, background="#CDCDCD")
         self.Frame_datosAcademicos.grid(row=1, column=0, padx=10, pady=5)
 
         # Grado a cargo
@@ -664,7 +667,7 @@ class FormularioProfesoresDesign:
             self.cuerpo_seccion,
             text="Editar",
             width=100,
-            command=self.editar_profesor,
+            command=lambda: self.editar_profesor(tarjeta),
             fg_color=COLOR_FONT_PURPLE,
             text_color="white",
         )
@@ -687,7 +690,7 @@ class FormularioProfesoresDesign:
             border_color="white",
             fg_color="white",
             bg_color="red",
-            command=lambda: self.editar_profesor(tarjeta)
+            command=lambda: self.editar_profesor(tarjeta),
         )
         
         # Frame de Imagen
@@ -809,10 +812,459 @@ class FormularioProfesoresDesign:
         )
         boton.grid(row=row, column=1, padx=(50, 10), pady=2)
 
-    def editar_profesor(self):
-        messagebox.showinfo(
-            "Editar", "Función para editar profesor aún no implementada."
+    def editar_profesor(self, tarjeta):
+        # Limpiar la ventana y mostrar detalles
+        for widget in self.panel_pricipal.winfo_children():
+            widget.destroy()
+            
+        # Contenedor para el formulario de edición
+        self.formulario = CTkFrame(self.panel_pricipal, fg_color="white")
+        self.formulario.pack(padx=20, pady=20, fill=tk.BOTH, expand=True)
+
+         # Crear un frame para los datos personales
+        self.Datos_personales = tk.Frame(self.formulario, background="white")
+        self.Datos_personales.pack(padx=10, pady=(10, 5), fill=tk.BOTH, expand=True)
+        
+        # Frame de Imagen
+        self.frame_imagen = tk.Frame(
+            self.Datos_personales, bg="white", width=100, height=100
         )
+        self.frame_imagen.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        # Botón para cargar imagen
+        btn_cargar_imagen = CTkButton(
+            self.frame_imagen, text="Cargar Foto", command=self.cargar_imagen
+        )
+        btn_cargar_imagen.pack(pady=5)
+        # Frame con informacion academica
+        self.Datos_academicos = tk.Frame(self.formulario, background="white")
+        self.Datos_academicos.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
+
+        # Frame de documentación
+        self.documentos = tk.Frame(self.formulario, background="White")
+        self.documentos.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+
+        # //////////// Secion Datos Personales //////////////
+        # Crear un frame dentro del frame para dividir imagen y texto
+        self.contenido_frame = CTkFrame(self.Datos_personales, fg_color="white")
+        self.contenido_frame.pack(fill=tk.BOTH, expand=True)
+
+        # Crear el frame para el texto
+        self.texto_frame = CTkFrame(self.contenido_frame, fg_color="white")
+        self.texto_frame.pack(side=tk.LEFT, fill=tk.BOTH, padx=10, pady=10, expand=True)
+
+        # Nombre de profesor
+        self.nombre_label = CTkLabel(
+            self.texto_frame,
+            font=("Arial", 16, "bold"),
+            text="Nombre:",
+            text_color=COLOR_FONT_BLACK,
+        )
+        self.nombre_label.grid(
+            column=0,
+            row=0,
+            sticky="w",
+        )
+
+        self.entry_nombre = CTkEntry(
+            self.texto_frame,
+            width=250,
+            border_color=COLOR_FONT_PURPLE,
+            fg_color="white",
+            text_color=COLOR_FONT_BLACK,
+            font=("Arial", 14),
+        )
+        self.entry_nombre.grid(
+            column=1,
+            row=0,
+            padx=10,
+            pady=2,
+            sticky="ew",
+        )
+        self.entry_nombre.insert(0, tarjeta["nombre"])
+
+        # Tipo de documento
+        self.label_tipo_documento = CTkLabel(
+            self.texto_frame,
+            font=("Arial", 16, "bold"),
+            text="Tipo de documento:",
+            text_color=COLOR_FONT_BLACK,
+        )
+        self.label_tipo_documento.grid(
+            column=0,
+            row=1,
+            sticky="w",
+        )
+        self.option_tipo_documento = CTkOptionMenu(
+            self.texto_frame,
+            values=["C.C", "C.E"],
+            width=30,
+            fg_color="#cdcdcd",
+            button_color="white",
+            button_hover_color=COLOR_FONT_PURPLE,
+            dropdown_fg_color="white",
+            dropdown_hover_color=COLOR_FONT_PURPLE,
+            text_color=COLOR_FONT_BLACK,
+            dropdown_text_color=COLOR_FONT_BLACK,
+        )
+        self.option_tipo_documento.grid(
+            column=1,
+            row=1,
+            sticky="ew",
+        )
+        self.option_tipo_documento.set(tarjeta["tipo_documento"])
+
+        # Numero de documento
+        self.Numero_documento = CTkLabel(
+            self.texto_frame,
+            font=("Arial", 16, "bold"),
+            text="Numero de documento",
+            text_color=COLOR_FONT_BLACK,
+        )
+        self.Numero_documento.grid(
+            column=0,
+            row=2,
+            sticky="w",
+        )
+
+        self.entry_numero_documento = CTkEntry(
+            self.texto_frame,
+            width=250,
+            border_color=COLOR_FONT_PURPLE,
+            fg_color="white",
+            text_color=COLOR_FONT_BLACK,
+            font=("Arial", 14),
+        )
+        self.entry_numero_documento.grid(
+            column=1,
+            row=2,
+            padx=10,
+            pady=2,
+            sticky="ew",
+        )
+        self.entry_numero_documento.insert(0, tarjeta["numero_documento"])
+        
+        # Numero de telefono
+        self.Numero_Telefono = CTkLabel(
+            self.texto_frame,
+            font=("Arial", 16, "bold"),
+            text="Numero de Telefono:",
+            text_color=COLOR_FONT_BLACK,
+        )
+        self.Numero_Telefono.grid(
+            column=0,
+            row=3,
+            sticky="w",
+        )
+        
+        
+        self.entry_numero_telefono = CTkEntry(
+            self.texto_frame,
+            width=250,
+            border_color=COLOR_FONT_PURPLE,
+            fg_color="white",
+            text_color=COLOR_FONT_BLACK,
+            font=("Arial", 14),
+        )
+        self.entry_numero_telefono.grid(column=1, row=3, padx=10, pady=2, sticky="ew")
+        self.entry_numero_telefono.insert(0, tarjeta["telefono"])
+        
+        # Direccion
+        self.Direccion = CTkLabel(
+            self.texto_frame,
+            font=("Arial", 16, "bold"),
+            text="Dirección:",
+            text_color=COLOR_FONT_BLACK,
+        )
+        self.Direccion.grid(
+            column=0,
+            row=4,
+            sticky="w",
+        )
+
+        self.entry_direccion = CTkEntry(
+            self.texto_frame,
+            width=250,
+            border_color=COLOR_FONT_PURPLE,
+            fg_color="white",
+            text_color=COLOR_FONT_BLACK,
+            font=("Arial", 14),
+        )
+        self.entry_direccion.grid(
+            column=1,
+            row=4,
+            padx=10,
+            pady=2,
+            sticky="ew",
+        )
+        self.entry_direccion.insert(0, tarjeta["direccion"])
+        
+        # correo electronico
+        self.CorreoElectronico = CTkLabel(
+            self.texto_frame,
+            font=("Arial", 16, "bold"),
+            text="Correo electronico:",
+            text_color=COLOR_FONT_BLACK,
+        )
+        self.CorreoElectronico.grid(
+            column=0,
+            row=5,
+            sticky="w",
+        )
+
+        self.entry_Correo_electronico = CTkEntry(
+            self.texto_frame,
+            width=250,
+            border_color=COLOR_FONT_PURPLE,
+            fg_color="white",
+            text_color=COLOR_FONT_BLACK,
+            font=("Arial", 14),
+        )
+        self.entry_Correo_electronico.grid(
+            column=1,
+            row=5,
+            padx=5,
+            pady=2,
+            sticky="ew",
+        )
+        self.entry_Correo_electronico.insert(0, tarjeta["correo_electronico"])
+        
+        # Fecha de nacimiento
+        self.Numero_documento = CTkLabel(
+            self.texto_frame,
+            font=("Arial", 16, "bold"),
+            text="Fecha de nacimiento:",
+            text_color=COLOR_FONT_BLACK,
+        )
+        self.Numero_documento.grid(column=0, row=6, sticky="w")
+
+        # Crear y colocar el selector de fecha
+        cal = DateEntry(
+            self.texto_frame,
+            width=18,
+            background=COLOR_FONT_WHITE,
+            foreground=COLOR_FONT_BLACK,
+            borderwidth=0,
+            date_pattern="y-mm-dd",
+            selectforeground=COLOR_FONT_WHITE,
+            selectbackground=COLOR_FONT_PURPLE,
+            font=("Arial", 10),
+        )
+        cal.grid(row=6, column=1, padx=5, pady=10, sticky="ew")
+        cal.set_date(tarjeta["fecha_nacimiento"])
+        
+        self.label_informacion_academica = CTkLabel(
+            self.Datos_academicos,
+            font=("Arial", 26, "bold"),
+            text="Información Académica:",
+            text_color=COLOR_FONT_PURPLE,
+        )
+        self.label_informacion_academica.grid(row=0, column=0)
+
+        self.Frame_datosAcademicos = tk.Frame(self.Datos_academicos, background="#cdcdcd")
+        self.Frame_datosAcademicos.grid(row=1, column=0, padx=10, pady=5)
+
+        # Grado a cargo
+        self.label_grado_cargo = CTkLabel(
+            self.Frame_datosAcademicos,
+            font=("Arial", 16, "bold"),
+            text="Grado a cargo:",
+            text_color=COLOR_FONT_BLACK,
+        )
+        self.label_grado_cargo.grid(
+            column=0,
+            row=0,
+            padx=10,
+            pady=2,
+            sticky="w",
+        )
+
+        self.option_Grado_a_cargo = CTkOptionMenu(
+            self.Frame_datosAcademicos,
+            values=["Primero", "Segundo", "Tercero", "Cuarto", "Quinto"],
+            width=200,
+            fg_color="white",
+            button_color="white",
+            button_hover_color=COLOR_FONT_PURPLE,
+            dropdown_fg_color="white",
+            dropdown_hover_color=COLOR_FONT_PURPLE,
+            text_color=COLOR_FONT_BLACK,
+            dropdown_text_color=COLOR_FONT_BLACK,
+        )
+        self.option_Grado_a_cargo.grid(
+            column=0,
+            row=1,
+            padx=10,
+            pady=2,
+            sticky="ew",
+        )
+        #self.option_Grado_a_cargo.set(tarjeta[""])
+
+
+        # Materias dictadas
+        self.label_Materias_dictadas = CTkLabel(
+            self.Frame_datosAcademicos,
+            font=("Arial", 16, "bold"),
+            text="Materia a cargo:",
+            text_color=COLOR_FONT_BLACK,
+        )
+        self.label_Materias_dictadas.grid(
+            column=1,
+            row=0,
+            padx=10,
+            pady=2,
+            sticky="w",
+        )
+        
+
+        self.option_Materias_dictadas = CTkOptionMenu(
+            self.Frame_datosAcademicos,
+            values=["Matematicas", "Ingles", "Español"],
+            width=200,
+            fg_color="white",
+            button_color="white",
+            button_hover_color=COLOR_FONT_PURPLE,
+            dropdown_fg_color="white",
+            dropdown_hover_color=COLOR_FONT_PURPLE,
+            text_color=COLOR_FONT_BLACK,
+            dropdown_text_color=COLOR_FONT_BLACK,
+        )
+        self.option_Materias_dictadas.grid(
+            column=1,
+            row=1,
+            padx=10,
+            pady=2,
+            sticky="ew",
+        )
+        #self.option_Materias_dictadas.set(tarjeta[""])
+        
+        # Contratado desde
+        self.label_fecha_contratacion = CTkLabel(
+            self.Frame_datosAcademicos,
+            font=("Arial", 16, "bold"),
+            text="Contratado desde:",
+            text_color=COLOR_FONT_BLACK,
+        )
+        self.label_fecha_contratacion.grid(
+            column=2,
+            row=0,
+            padx=10,
+            pady=2,
+            sticky="w",
+        )
+
+        cal_fecha_contratacion = DateEntry(
+            self.Frame_datosAcademicos,
+            width=18,
+            background=COLOR_FONT_WHITE,
+            foreground=COLOR_FONT_BLACK,
+            borderwidth=0,
+            date_pattern="y-mm-dd",
+            selectforeground=COLOR_FONT_WHITE,
+            selectbackground=COLOR_FONT_PURPLE,
+            font=("Arial", 10),
+        )
+        cal_fecha_contratacion.grid(row=1, column=2, padx=10, pady=10, sticky="ew")
+        #cal_fecha_contratacion.set_date(tarjeta["fecha_contratacion"])
+
+        # //////////// Secion Documentos //////////////
+
+        self.label_Documentos = CTkLabel(
+            self.documentos,
+            font=("Arial", 26, "bold"),
+            text="Documentos:",
+            text_color=COLOR_FONT_PURPLE,
+        )
+        self.label_Documentos.grid(row=0, column=0)
+
+        # CARGA DE DOCUMENTO DE IDENTIDAD
+        self.label_Documento_identidad = CTkLabel(
+            self.documentos,
+            font=("Arial", 16, "bold"),
+            text="Documento de identidad",
+            text_color=COLOR_FONT_BLACK,
+        )
+        self.label_Documento_identidad.grid(
+            column=0,
+            row=1,
+            padx=10,
+            pady=2,
+            sticky="w",
+        )
+
+        btn_cargar_documento_identidad = CTkButton(
+            self.documentos, text="Cargar documento", command=self.Cargar_documento
+        )
+        btn_cargar_documento_identidad.grid(
+            column=1, row=1, pady=5, padx=(100, 10), sticky="E"
+        )
+
+        # CARGA DE DIPLOMA
+        self.label_DIPLOMA = CTkLabel(
+            self.documentos,
+            font=("Arial", 16, "bold"),
+            text="Diploma",
+            text_color=COLOR_FONT_BLACK,
+        )
+        self.label_DIPLOMA.grid(
+            column=0,
+            row=2,
+            padx=10,
+            pady=2,
+            sticky="w",
+        )
+
+        btn_cargar_diploma = CTkButton(
+            self.documentos, text="Cargar documento", command=self.Cargar_documento
+        )
+        btn_cargar_diploma.grid(column=1, row=2, pady=5, padx=(100, 10), sticky="E")
+
+        # CARGA DE ESPECIALIZACION
+        self.label_especializacion = CTkLabel(
+            self.documentos,
+            font=("Arial", 16, "bold"),
+            text="Documento de identidad",
+            text_color=COLOR_FONT_BLACK,
+        )
+        self.label_especializacion.grid(
+            column=0,
+            row=3,
+            padx=10,
+            pady=2,
+            sticky="w",
+        )
+
+        btn_cargar_especializacion = CTkButton(
+            self.documentos, text="Cargar documento", command=self.Cargar_documento
+        )
+        btn_cargar_especializacion.grid(
+            column=1, row=3, pady=5, padx=(100, 10), sticky="E"
+        )
+        # Botón para guardar cambios
+        self.boton_guardar = CTkButton(self.documentos, text="Guardar cambios", command=lambda: self.guardar_cambios(tarjeta), fg_color=COLOR_FONT_PURPLE, text_color="white")
+        self.boton_guardar.place(relx=1.0, rely=1.0, anchor="se", x=-10, y=-10)
+
+        # Botón para cancelar la edición
+        self.boton_cancelar = CTkButton(self.documentos, text="Cancelar", command=self.panel_pricipal.destroy, fg_color="gray", text_color="white")
+        self.boton_cancelar.place(relx=1.0, rely=1.0, anchor="se", x=-10, y=-50)
+
+    def guardar_cambios(self, tarjeta):
+        # Aquí puedes guardar los nuevos valores editados
+        tarjeta["nombre"] = self.nombre_entry.get()
+        tarjeta["telefono"] = self.telefono_entry.get()
+        tarjeta["direccion"] = self.direccion_entry.get()
+        tarjeta["correo_electronico"] = self.correo_entry.get()
+        
+        # Limpiar el panel principal para mostrar la vista detallada con los nuevos datos
+        for widget in self.panel_pricipal.winfo_children():
+            widget.destroy()  # Elimina todos los widgets del panel actual
+
+        # Llamar a la función que muestra los detalles de la tarjeta, con los datos actualizados
+        self.ventana_detalles(tarjeta)  # Vuelve a mostrar la vista detallada
+
+
+        # Mostrar un mensaje de confirmación
+        messagebox.showinfo("Guardado", "Los cambios se han guardado correctamente.")
 
     def eliminar_profesor(self):
         messagebox.showwarning("Eliminar", "¿Estás seguro de eliminar este profesor?")

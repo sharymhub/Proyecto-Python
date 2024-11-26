@@ -39,8 +39,13 @@ class FormHorariosDesign:
         self.colores_materias = {
             "Matemáticas": "#F4DD9F",  # Amarillo dorado
             "Inglés": "#A0D4F9",       # Azul
-            "Lenguaje": "#C9F49F",     # Verde
+            "Lenguaje": "#F6AACF",  #Rosado
+            "C.Naturales": "#C9F49F", #Verde
+            "C.Sociales" : "#FD9D85", #Rojo
+            "E.Fisica" : "#F9EDE1", #Crema
+  
         }
+        
         self.barra_superior = tk.Frame(self.panel_principal, background="white")
         self.barra_superior.pack(side=tk.TOP, fill=tk.X, expand=False)
         
@@ -110,7 +115,7 @@ class FormHorariosDesign:
     def _crear_horario(self):
         # Días y horas
         dias = ["Hora", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"]
-        horas = [f"{h}:00 - {h + 1}:00" for h in range(6, 12)]
+        horas = [f"{h}:00 - {h + 1}:00" for h in range(6, 9)] + ["9:00 - 10:00 (Descanso)"] + [f"{h}:00 - {h + 1}:00" for h in range(10, 12)]
 
         # Crear la cuadrícula
         for i, dia in enumerate(dias):
@@ -210,7 +215,7 @@ class FormHorariosDesign:
         lbl_materia = CTkLabel(ventana, text="Seleccione la materia:", font=("Arial", 14), text_color=COLOR_FONT_BLACK,)
         lbl_materia.pack(pady=10)
 
-        self.materias = ["Matemáticas", "Inglés", "Lenguaje"]
+        self.materias = ["Matemáticas", "Inglés", "Lenguaje","C.Naturales", "C.Sociales", "E.Fisica"]
         self.materia_seleccionada = tk.StringVar(value=self.materias[0])
         dropdown_materia = CTkOptionMenu(
             ventana,
@@ -236,7 +241,7 @@ class FormHorariosDesign:
 
         self.horarios = [
             "6:00 - 7:00", "7:00 - 8:00", "8:00 - 9:00",
-            "9:30 - 10:30", "10:30 - 11:30", "11:30 - 12:30"
+            "Descanso", "10:00 - 11:00", "11:00 - 12:00"
         ]
         self.horarios_seleccionados = []
 
@@ -323,9 +328,9 @@ class FormHorariosDesign:
                 "6:00 - 7:00": 1,
                 "7:00 - 8:00": 2,
                 "8:00 - 9:00": 3,
-                "9:30 - 10:30": 4,
-                "10:30 - 11:30": 5,
-                "11:30 - 12:30": 6,
+                "9:00 - 10:00 (Descanso)": 4,
+                "10:00 - 11:00": 5,
+                "11:00 - 12:00": 6,
             }
 
             if horario not in filas_indices:

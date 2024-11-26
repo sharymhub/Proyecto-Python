@@ -124,7 +124,8 @@ class FormEstudiantesDesign:
         
         self.cuerpo_estudiantes = tk.Frame(self.panel_principal, background="white")
         self.cuerpo_estudiantes.pack(side=tk.TOP, fill=tk.X, expand=False)
-        
+       
+        # Boton ver más +
         self.btn_ver_mas = CTkButton(
             self.cuerpo_estudiantes,
             text="Ver más +",
@@ -149,4 +150,9 @@ class FormEstudiantesDesign:
     def ver_inhabilitados(self):
         print("Mostrando elementos inhabilitados.")
         # Agrega aquí la lógica para mostrar elementos inhabilitados
+    
+    def vista_detallada(self):
+        print("Mostrando vista detallada.")
+        # Agrega aquí la lógica para mostrar vista detallada del estudiante
+    
                 

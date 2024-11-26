@@ -23,7 +23,7 @@ class HorarioApp:
 
         # Días y horas
         dias = ["Hora", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"]
-        horas = [f"{h}:00 - {h + 1}:00" for h in range(8, 18)]
+        horas = [f"{h}:00 - {h + 1}:00" for h in range(6, 9)] + ["9:00 - 10:00 (Descanso)"] + [f"{h}:00 - {h + 1}:00" for h in range(10, 12)]
 
         # Crear la cuadrícula
         for i, dia in enumerate(dias):
