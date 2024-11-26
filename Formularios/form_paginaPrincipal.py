@@ -17,6 +17,8 @@ from Formularios.Section_profesores.form_profesores_design import (
 )
 from Formularios.form_matriculas_design import FormMatriculasDesign
 from Formularios.form_Materias_design import FormularioMateriasDesign
+from Formularios.form_estudiantes_design import FormEstudiantesDesign
+from Formularios.form_horarios_design import FormHorariosDesign
 
 
 class formulario(tk.Tk):
@@ -100,9 +102,9 @@ class formulario(tk.Tk):
         buttons_info = [
             ("Usuarios", self.buttonUsuarios, self.abrir_seccion_usuarios),
             ("Profesores", self.buttonProfesores, self.abrir_seccion_profesores),
-            ("Horarios", self.buttonHorarios, self.abrir_seccion_usuarios),
+            ("Horarios", self.buttonHorarios, self.abrir_seccion_horarios),
             ("Matriculas", self.buttonMatriculas, self.abrir_seccion_matriculas),
-            ("Estudiantes", self.buttonEstudiantes, self.abrir_seccion_usuarios),
+            ("Estudiantes", self.buttonEstudiantes, self.abrir_seccion_estudiantes),
             ("Materias", self.buttonMaterias, self.abrir_seccion_materias),
         ]
 
@@ -177,7 +179,15 @@ class formulario(tk.Tk):
     def abrir_seccion_matriculas(self):
         self.limpiar_panel(self.cuerpo_principal)
         FormMatriculasDesign(self.cuerpo_principal)
-    
+
     def abrir_seccion_materias(self):
         self.limpiar_panel(self.cuerpo_principal)
         FormularioMateriasDesign(self.cuerpo_principal)
+        
+    def abrir_seccion_estudiantes(self):
+        self.limpiar_panel(self.cuerpo_principal)
+        FormEstudiantesDesign(self.cuerpo_principal)
+        
+    def abrir_seccion_horarios(self):
+        self.limpiar_panel(self.cuerpo_principal)
+        FormHorariosDesign(self.cuerpo_principal)
