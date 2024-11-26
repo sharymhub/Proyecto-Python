@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 from config import COLOR_CUERPO_PRINCIPAL, COLOR_MENU_LATERAL
 from customtkinter import (
     CTk,
@@ -62,6 +63,61 @@ class FormularioMateriasDesign:
         )
         self.Btn_NuevaMateria.image = icon
         self.Btn_NuevaMateria.pack(side=tk.RIGHT, padx=10, pady=10)
+        
+        self.formtabla= tk.LabelFrame(panel_principal, background= 'purple')
+        self.formtabla.pack(side=tk.LEFT, padx=10, pady=10)
+         # Tabla para mostrar las materias
+        self.tabla = ttk.Treeview(self.formtabla, columns=["Nombre", "idProfesor"], show="headings")
+        self.tabla.grid(column=0, row=0, padx=5, pady=5)
+        self.tabla.heading("Nombre", text="Nombre")
+        self.tabla.heading("idProfesor", text="Profesor")
+        self.tabla.column("Nombre", width=120)
+
+        # Cargar los datos desde la base de datos
+        self.cargar_materias()
+        
+    def cargar_materias(self):  
+        conn = self.conectar_mysql()
+        if conn:
+            try:
+                cursor = conn.cursor()
+                cursor.execute("""
+                    SELECT materias.Nombre, profesores.Nombre 
+                    FROM materias 
+                    JOIN profesores ON materias.idProfesor = profesores.Correo_electronico
+                """)
+                materias = cursor.fetchall()
+
+                if not materias:
+                    print("No se encontraron materias.")
+                else:
+                    print("Materias cargadas:", materias)
+
+                # Limpiar la tabla antes de insertar nuevos datos
+                self.tabla.delete(*self.tabla.get_children())
+
+                # Insertar los datos en la tabla
+                for materia in materias:
+                    self.tabla.insert('', 'end', values=(materia[0], materia[1])) 
+
+            except mysql.connector.Error as err:
+                mb.showerror("Error", f"Error al ejecutar consulta: {err}")
+            finally:
+                conn.close()
+    def conectar_mysql(self):
+        try:
+            conn = mysql.connector.connect(
+                host="localhost", user="root", password="", database="giebd"
+            )
+            return conn
+        except mysql.connector.Error as err:
+            mb.showerror("Error de conexión", f"Error al conectar con la base de datos: {err}")
+            return None
+        except Exception as e:
+            mb.showerror("Error desconocido", f"Ocurrió un error inesperado: {e}")
+            return None
+
+        
 
     # ///////////////////// CREAR NUEVA MATERIA //////////////////////
     def Crear_Nuevo_Usuario(self, modo="Nueva "):
@@ -213,6 +269,62 @@ class FormularioMateriasDesign:
             height=30,
         )
         self.btn_agregar.grid(row=0, column=1, padx=10)
+    
+        # Lógica para agregar materia
+        def obtener_grados_seleccionados():
+            grados_seleccionados = []
+            if Grado1.get():
+                grados_seleccionados.append("Grado 1")
+            if Grado2.get():
+                grados_seleccionados.append("Grado 2")
+            if Grado3.get():
+                grados_seleccionados.append("Grado 3")
+            if Grado4.get():
+                grados_seleccionados.append("Grado 4")
+            if Grado5.get():
+                grados_seleccionados.append("Grado 5")
+            return grados_seleccionados
+
+        def agregar_materia():
+            nombre_materia = self.entry_nombre.get()
+            grados = obtener_grados_seleccionados()
+            id_profesor = self.option_profesor_encargado.get()
+
+            if not nombre_materia:
+                mb.showwarning("Campos vacíos", "Por favor, ingrese el nombre de la materia.")
+                return
+
+            if not grados:
+                mb.showwarning("Campos vacíos", "Por favor, seleccione al menos un grado.")
+                return
+
+            if not id_profesor:
+                mb.showwarning("Campos vacíos", "Por favor, seleccione un profesor.")
+                return
+
+            # Agregar la materia a la base de datos
+            self.agregar_materia_a_bd(nombre_materia, grados, id_profesor)
+
+        self.btn_agregar.configure(command=agregar_materia)
+
+    def agregar_materia_a_bd(self, nombre_materia, grados, id_profesor):
+        conn = self.conectar_mysql()
+        if conn:
+            try:
+                cursor = conn.cursor()
+                grados_str = ', '.join(grados)
+                cursor.execute("""
+                    INSERT INTO materias (Nombre, Grados, idProfesor) 
+                    VALUES (%s, %s, %s)
+                """, (nombre_materia, grados_str, id_profesor))
+                conn.commit()
+                mb.showinfo("Éxito", "Materia agregada correctamente.")
+                self.Ventana_formulario_nuevo_usuario.destroy()
+                self.cargar_materias()
+            except mysql.connector.Error as err:
+                mb.showerror("Error", f"Error al agregar materia: {err}")
+            finally:
+                conn.close()
 
     def Editar_Usuario(self):
         # Llamar a Crear_Nuevo_Usuario pero en modo editar
