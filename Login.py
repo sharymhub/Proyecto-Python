@@ -156,7 +156,7 @@ class Login:
                 #comprobar las contraseñas(sin cifrado)
                 if usuario == stored_username and contraseña == stored_password:
                     mb.showinfo('Login exitoso',f'Bienvenido {usuario}')
-                    if rol == 'Administrador':
+                    if rol == 'Administrativo':
                         self.VentanaAdmin()
                         self.root.quit()
                         self.root.destroy()
