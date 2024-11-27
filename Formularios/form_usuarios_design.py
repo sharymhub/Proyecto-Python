@@ -277,10 +277,172 @@ class FormularioUsuariosDesign:
             command=self.agregar_usuario
         )
         self.btn_agregar.grid(row=0, column=1, padx=10)
-
+        
+        
+     # //////// EDITAR USUARIO /////////   
     def Editar_Usuario(self):
         # Llamar a Crear_Nuevo_Usuario pero en modo editar
-        self.Crear_Nuevo_Usuario(modo="Editar ")
+        #self.Crear_Nuevo_Usuario(modo="Editar ")
+        # Obtener la selección actual en la tabla
+        seleccion = self.tabla.selection()
+        
+        if not seleccion:
+            mb.showwarning("Selección vacía", "Por favor, selecciona un usuario para editar.")
+            return
+        
+        # Obtener los datos del usuario seleccionado
+        item = seleccion[0]
+        usuario_seleccionado = self.tabla.item(item)
+        datos_usuario = usuario_seleccionado["values"]  # [Correo, Nombreusuario, Contraseña, Telefono, Rol]
+        
+        # Crear ventana de edición con los datos seleccionados
+        self.Ventana_formulario_editar_usuario = tk.Toplevel()
+        self.Ventana_formulario_editar_usuario.title("Editar Usuario")
+        self.Ventana_formulario_editar_usuario.geometry("300x480+1100+400")
+        self.Ventana_formulario_editar_usuario.configure(bg="white")
+
+        # Configurar el formulario de edición
+        self.label_nombre = CTkLabel(
+            self.Ventana_formulario_editar_usuario,
+            text="Nombre de usuario:",
+            text_color=COLOR_TEXTO,
+        )
+        self.label_nombre.pack(anchor="w", padx=20)
+        self.entry_nombre = CTkEntry(
+            self.Ventana_formulario_editar_usuario,
+            width=250,
+            border_color=COLOR_BORDE_ENTRADA,
+            fg_color="white",
+            text_color=COLOR_TEXTO,
+        )
+        self.entry_nombre.pack(pady=5)
+        self.entry_nombre.insert(0, datos_usuario[1])  # Nombre de usuario actual
+
+        self.label_contraseña = CTkLabel(
+            self.Ventana_formulario_editar_usuario,
+            text="Contraseña:",
+            text_color=COLOR_TEXTO,
+        )
+        self.label_contraseña.pack(anchor="w", padx=20)
+        self.entry_contraseña = CTkEntry(
+            self.Ventana_formulario_editar_usuario,
+            width=250,
+            border_color=COLOR_BORDE_ENTRADA,
+            fg_color="white",
+            text_color=COLOR_TEXTO,
+        )
+        self.entry_contraseña.pack(pady=5)
+        self.entry_contraseña.insert(0, datos_usuario[2])  # Contraseña actual
+
+        self.label_cargo = CTkLabel(
+            self.Ventana_formulario_editar_usuario, text="Cargo:", text_color=COLOR_TEXTO
+        )
+        self.label_cargo.pack(anchor="w", padx=20)
+        self.option_cargo = CTkOptionMenu(
+            self.Ventana_formulario_editar_usuario,
+            values=["Administrativo", "Profesor"],
+            width=250,
+            fg_color="white",
+            button_color="white",
+            button_hover_color=COLOR_BOTON_AGREGAR,
+            dropdown_fg_color="white",
+            dropdown_hover_color=COLOR_FONDO_TITULO,
+            text_color=COLOR_TEXTO,
+            dropdown_text_color=COLOR_TEXTO,
+        )
+        self.option_cargo.pack(pady=5)
+        self.option_cargo.set(datos_usuario[4])  # Rol actual
+
+        self.label_telefono = CTkLabel(
+            self.Ventana_formulario_editar_usuario,
+            text="Teléfono:",
+            text_color=COLOR_TEXTO,
+        )
+        self.label_telefono.pack(anchor="w", padx=20)
+        self.entry_telefono = CTkEntry(
+            self.Ventana_formulario_editar_usuario,
+            width=250,
+            border_color=COLOR_BORDE_ENTRADA,
+            fg_color="white",
+            text_color=COLOR_TEXTO,
+        )
+        self.entry_telefono.pack(pady=5)
+        self.entry_telefono.insert(0, datos_usuario[3])  # Teléfono actual
+
+        self.label_correo = CTkLabel(
+            self.Ventana_formulario_editar_usuario,
+            text="Correo Electrónico:",
+            text_color=COLOR_TEXTO,
+        )
+        self.label_correo.pack(anchor="w", padx=20)
+        self.entry_correo = CTkEntry(
+            self.Ventana_formulario_editar_usuario,
+            width=250,
+            border_color=COLOR_BORDE_ENTRADA,
+            fg_color="white",
+            text_color=COLOR_TEXTO,
+        )
+        self.entry_correo.pack(pady=5)
+        self.entry_correo.insert(0, datos_usuario[0])  # Correo actual (no editable)
+        self.entry_correo.configure(state="disabled")  # Correo no se debe modificar
+
+        # Botones
+        self.frame_botones = CTkFrame(
+            self.Ventana_formulario_editar_usuario, fg_color=COLOR_CUERPO_PRINCIPAL
+        )
+        self.frame_botones.pack(pady=20)
+
+        self.btn_cancelar = CTkButton(
+            self.frame_botones,
+            text="Cancelar",
+            fg_color=COLOR_BOTON_CANCELAR,
+            hover_color="#757575",
+            width=100,
+            height=30,
+            command=self.Ventana_formulario_editar_usuario.destroy,
+        )
+        self.btn_cancelar.grid(row=0, column=0, padx=10)
+
+        self.btn_guardar = CTkButton(
+            self.frame_botones,
+            text="Guardar Cambios",
+            fg_color=COLOR_BOTON_AGREGAR,
+            hover_color=COLOR_BOTON_AGREGAR,
+            width=100,
+            height=30,
+            command=lambda: self.guardar_cambios_usuario(datos_usuario[0])  # Pasar correo como identificador
+        )
+        self.btn_guardar.grid(row=0, column=1, padx=10)
+
+    def guardar_cambios_usuario(self, correo):
+        nombre_usuario = self.entry_nombre.get()
+        contrasena = self.entry_contraseña.get()
+        cargo = self.option_cargo.get()
+        telefono = self.entry_telefono.get()
+
+        # Validación
+        if not all([nombre_usuario, contrasena, cargo, telefono]):
+            mb.showwarning("Campos vacíos", "Todos los campos son obligatorios.")
+            return
+
+        # Actualizar datos en la base de datos
+        conn = self.conectar_mysql()
+        if conn:
+            try:
+                cursor = conn.cursor()
+                cursor.execute("""
+                    UPDATE usuarios
+                    SET Nombreusuario = %s, Contraseña = %s, Rol = %s, Telefono = %s
+                    WHERE Correo = %s
+                """, (nombre_usuario, contrasena, cargo, telefono, correo))
+                conn.commit()
+                mb.showinfo("Usuario actualizado", "Los cambios han sido guardados exitosamente.")
+                self.Ventana_formulario_editar_usuario.destroy()
+                self.cargarusuarios()  # Recargar la tabla de usuarios
+            except mysql.connector.Error as err:
+                mb.showerror("Error", f"Error al guardar los cambios: {err}")
+            finally:
+                conn.close()
 
  # ///////////////////// AGREGAR USUARIO //////////////////////
     def agregar_usuario(self):

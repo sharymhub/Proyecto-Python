@@ -148,26 +148,18 @@ class Login:
             user= cursor.fetchone()
             
             #Verificar si el usuario exite
-            if user:
-                stored_username= user[0]
-                stored_password= user[1] #Para contraseñas en texto plano
-                rol= user[2]
-                
-                #comprobar las contraseñas(sin cifrado)
-                if usuario == stored_username and contraseña == stored_password:
-                    mb.showinfo('Login exitoso',f'Bienvenido {usuario}')
-                    if rol == 'Administrativo':
-                        self.VentanaAdmin()
-                        self.root.quit()
-                        self.root.destroy()
-                else:
-                    mb.showerror('Error de inicio de sesión', 'Contraseña o Usuario incorrecto')
+            if user and usuario == user[0] and contraseña == user[1]:
+                mb.showinfo('Login exitoso', f'Bienvenido {usuario}')
+                if user[2] == 'Administrativo':
+                    self.root.quit()
+                    self.root.destroy()
+                    self.VentanaAdmin()
+                    
+                    
             else:
-                mb.showerror('Error de inicio de sesión', 'Usuario no existente')
-                
-        except mysql.connector.Error as error:
-            mb.showerror('Error de conexión', f'Error al conectar con la base de datos: {error}')
-            
+                mb.showerror('Error de inicio de sesión', 'Usuario o contraseña incorrectos')
+        except mysql.connector.Error as e:
+            mb.showerror('Error de conexión', f'Error al conectar con la base de datos: {e}')
         finally:
             if conn:
                 conn.close()   
