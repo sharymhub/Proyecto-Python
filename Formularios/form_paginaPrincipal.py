@@ -19,7 +19,7 @@ from Formularios.form_matriculas_design import FormMatriculasDesign
 from Formularios.form_Materias_design import FormularioMateriasDesign
 from Formularios.form_estudiantes_design import FormEstudiantesDesign
 from Formularios.form_horarios_design import FormHorariosDesign
-
+import subprocess
 
 class formulario(tk.Tk):
 
@@ -192,7 +192,11 @@ class formulario(tk.Tk):
         self.limpiar_panel(self.cuerpo_principal)
         FormHorariosDesign(self.cuerpo_principal)
     
+    def AbrirLogin(self):
+        subprocess.Popen(['python', 'Login.py'])
     def cerrarsesion(self):
         # Acciones para cerrar sesión, como limpiar datos de usuario o cerrar la ventana
         print("Cerrando sesión...")
+        self.AbrirLogin()
         self.quit()  # Cierra la ventana
+        
