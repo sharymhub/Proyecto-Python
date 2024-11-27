@@ -714,7 +714,7 @@ class FormularioProfesoresDesign:
         self.texto_frame.pack(side=tk.LEFT, fill=tk.BOTH, padx=10, expand=True)
 
         self.agregar_label(self.texto_frame, "Nombre:", tarjeta["nombre"])
-        # self.agregar_label(self.texto_frame, "Tipo de documento:", tarjeta["tipo_documento"], 1)
+        self.agregar_label(self.texto_frame, "Tipo de documento:", tarjeta["tipo_documento"])
         self.agregar_label(
             self.texto_frame, "Número de documento:", tarjeta["numero_documento"]
         )
