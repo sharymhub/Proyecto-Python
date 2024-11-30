@@ -1,8 +1,9 @@
 import tkinter as tk
+from tkinter import ttk
 from util.util_imagenes import leer_imagen
 from tkcalendar import DateEntry
 from tkinter import filedialog
-from tkinter import messagebox
+from tkinter import messagebox as mb
 from tkinter import StringVar
 import re
 from PIL import Image, ImageTk
@@ -26,6 +27,9 @@ from customtkinter import (
     CTkImage,
     CTkRadioButton,
 )
+
+import mysql.connector
+from mysql.connector import Error
 
 estudiante = {
     "Datos personales" :{
@@ -77,6 +81,7 @@ estudiante = {
         "historia_clinica": "ruta/a/documentos/historia_clinica_juan_perez.pdf"
     }
 }
+
 
 
 class FormEstudiantesDesign:
@@ -187,6 +192,58 @@ class FormEstudiantesDesign:
         )
         self.btn_ver_mas.pack(side=tk.RIGHT, padx=10, pady=5)
         
+        self.formtabla= tk.LabelFrame(panel_principal, background= 'purple')
+        self.formtabla.pack(side=tk.LEFT, padx=10, pady=10)
+         # Tabla para mostrar las materias
+        self.tabla = ttk.Treeview(self.formtabla, columns=["No_identificacion","Nombre","Grado", "TelefonoAcudiente"], show="headings")
+        self.tabla.grid(column=0, row=0, padx=5, pady=5)
+        self.tabla.heading("No_identificacion", text="N° Identificación")
+        self.tabla.heading("Nombre", text="Nombre")
+        self.tabla.heading("Grado", text="Grado")
+        self.tabla.heading("TelefonoAcudiente", text="Teléfono Acudiente")
+        
+     # Cargar los datos desde la base de datos
+        self.cargar_estudiantes()
+        
+    def cargar_estudiantes(self):  
+        conn = self.conectar_mysql()
+        if conn:
+            try:
+                cursor = conn.cursor()
+                cursor.execute("""
+                    SELECT No_identificacion, Nombre, Grado, TelefonoAcudiente
+                    FROM estudiantes
+                """)
+                alumnos = cursor.fetchall()
+
+                if not alumnos:
+                    print("No se encontraron estudiantes.")
+                else:
+                    print("Materias cargadas:", alumnos)
+
+                # Limpiar la tabla antes de insertar nuevos datos
+                self.tabla.delete(*self.tabla.get_children())
+
+                # Insertar los datos en la tabla
+                for materia in alumnos:
+                    self.tabla.insert('', 'end', values=(materia[0], materia[1])) 
+
+            except mysql.connector.Error as err:
+                mb.showerror("Error", f"Error al ejecutar consulta: {err}")
+            finally:
+                conn.close()
+    def conectar_mysql(self):
+        try:
+            conn = mysql.connector.connect(
+                host="localhost", user="root", password="", database="giebd"
+            )
+            return conn
+        except mysql.connector.Error as err:
+            mb.showerror("Error de conexión", f"Error al conectar con la base de datos: {err}")
+            return None
+        except Exception as e:
+            mb.showerror("Error desconocido", f"Ocurrió un error inesperado: {e}")
+            return None
         
         # Método para realizar búsqueda
     def realizar_busqueda(self):
@@ -483,11 +540,11 @@ class FormEstudiantesDesign:
                 # Usaremos shutil para mover el archivo (asegúrate de importar shutil)
                 import shutil
                 shutil.copy(path, destino)  # Copia el archivo al destino seleccionado
-                messagebox.showinfo("Éxito", f"Documento descargado en: {destino}")
+                mb.showinfo("Éxito", f"Documento descargado en: {destino}")
             else:
-                messagebox.showwarning("Error", "No se seleccionó un destino para guardar el archivo.")
+                mb.showwarning("Error", "No se seleccionó un destino para guardar el archivo.")
         except Exception as e:
-            messagebox.showerror("Error", f"No se pudo descargar el archivo. Error: {e}")
+            mb.showerror("Error", f"No se pudo descargar el archivo. Error: {e}")
 
             
     def agregar_label(self, frame, label_text, value_text, row):

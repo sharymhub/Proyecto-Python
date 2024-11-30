@@ -2,7 +2,7 @@ import tkinter as tk
 from util.util_imagenes import leer_imagen
 from tkcalendar import DateEntry
 from tkinter import filedialog
-from tkinter import messagebox
+from tkinter import messagebox as mb
 from tkinter import StringVar
 import re
 from PIL import Image, ImageTk
@@ -26,6 +26,8 @@ from customtkinter import (
     CTkImage,
     CTkRadioButton,
 )
+import mysql.connector
+from mysql.connector import Error
 
 class FormHorariosDesign:
     def __init__(self, panel_principal):
@@ -111,6 +113,9 @@ class FormHorariosDesign:
         # Almacena las celdas del horario
         self.celdas_horario = {}
         self._crear_horario()
+        self.cargar_horario()
+        
+          
 
     def _crear_horario(self):
         # Días y horas
@@ -159,9 +164,53 @@ class FormHorariosDesign:
             self.horario_frame.columnconfigure(i, weight=1)
         for i in range(len(horas) + 1):
             self.horario_frame.rowconfigure(i, weight=1)
+            
+    def cargar_horario(self):
+        conn = self.conectar_mysql()
+        if conn:
+            try:
+                cursor = conn.cursor()
+                cursor.execute("SELECT  `Lunes`, `Martes`, `Miércoles`, `Jueves`, `Viernes` FROM horarios")
+                horario = cursor.fetchall()
+
+                if not horario:
+                    print("No se encontraron horarios.")
+                else:
+                    print("horarios cargados:", horario)
+                #Insertar los datos en las celdas del horario    
+                for fila,(hora,lunes,martes,miercoles,jueves,viernes) in enumerate(horario, start=1):
+                    #Actualiza la columna de hora
+                    self.celdas_horario[(fila,0)].configure(text=hora)
+                    
+                    #Actualiza las materias de cada día
+                    self.celdas_horario[(fila, 1)].configure(text=lunes)
+                    self.celdas_horario[(fila, 2)].configure(text=martes)
+                    self.celdas_horario[(fila, 3)].configure(text=miercoles)
+                    self.celdas_horario[(fila, 4)].configure(text=jueves)
+                    self.celdas_horario[(fila, 5)].configure(text=viernes)
+
+            except mysql.connector.Error as err:
+                mb.showerror("Error", f"Error al ejecutar consulta: {err}")
+            finally:
+                conn.close()
+    def conectar_mysql(self):
+        try:
+            conn = mysql.connector.connect(
+                host="localhost", 
+                user="root", 
+                password="", 
+                database="giebd",
+            )
+            return conn
+        except mysql.connector.Error as err:
+            mb.showerror("Error de conexión", f"Error al conectar con la base de datos: {err}")
+            return None
+        
+            
     
     
     def _abrir_ventana_actualizar(self):
+        
         # Crear ventana emergente
         ventana = tk.Toplevel(self.panel_principal)
         ventana.title("Actualizar Horario")
@@ -255,6 +304,9 @@ class FormHorariosDesign:
                 command=lambda h=horario: self._toggle_horario(h),
             )
             chk_horario.grid(row=index // 2, column=index % 2, padx=10, pady=5, sticky="w")
+            
+            
+        
 
         # Advertencia
         lbl_advertencia = CTkLabel(
@@ -298,52 +350,35 @@ class FormHorariosDesign:
         elif len(self.horarios_seleccionados) < 2:
             self.horarios_seleccionados.append(horario)
         else:
-            messagebox.showerror(
+            mb.showerror(
                 "Error",
                 "No puede seleccionar más de dos horarios para la misma materia."
             )
 
     def _guardar_horario(self, ventana):
-        grado = self.grado_seleccionado.get()
+        horarios = self.horarios_seleccionados.get()
         dia = self.dia_seleccionado.get()
         materia = self.materia_seleccionada.get()
-        horarios = self.horarios_seleccionados
 
         if not horarios:
-            messagebox.showerror("Error", "Debe seleccionar al menos un horario.")
+            mb.showerror("Error", "Debe seleccionar al menos un horario.")
             return
-
-        # Mapea los días a columnas
-        dias_indices = {"Lunes": 1, "Martes": 2, "Miércoles": 3, "Jueves": 4, "Viernes": 5}
-
-        if dia not in dias_indices:
-            messagebox.showerror("Error", "El día seleccionado no es válido.")
-            return
-
-        columna = dias_indices[dia]
-
-        for horario in horarios:
-            # Mapea los horarios a filas
-            filas_indices = {
-                "6:00 - 7:00": 1,
-                "7:00 - 8:00": 2,
-                "8:00 - 9:00": 3,
-                "9:00 - 10:00 (Descanso)": 4,
-                "10:00 - 11:00": 5,
-                "11:00 - 12:00": 6,
-            }
-
-            if horario not in filas_indices:
-                messagebox.showerror("Error", f"El horario {horario} no es válido.")
-                continue
-
-            fila = filas_indices[horario]
-
-            # Actualiza el texto de la celda correspondiente
-            celda = self.horario_frame.grid_slaves(row=fila, column=columna)
-            if celda:
-                celda[0].configure(text=f"{materia}\n({grado})", fg_color=self.colores_materias.get(materia,"white"),text_color="black")
-
-        # Mensaje de confirmación
-        messagebox.showinfo("Horario actualizado", "Los datos han sido guardados correctamente.")
-        ventana.destroy()
+        
+        try:
+            conexion= self.conectar_mysql()
+            if conexion is None:
+                raise Exception('No se pudo conectar a la base de datos.')
+            
+            cursor= conexion.cursor()
+            
+            for horario in horarios:
+                query=f'UPDATE horarios SET `{dia}`= % WHERE `hora`= %s'
+                cursor.execute(query,(materia,horario))
+                
+            conexion.commit()
+            cursor.close()
+            conexion.close()
+            mb.showinfo('Horario actualizado', 'Los datos han sido guardados correctamete')
+            ventana.destroy()
+        except Exception as e:
+            mb.showerror('Error', f'Hubo un problema al guardar los datos:{e}')
