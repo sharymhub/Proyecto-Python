@@ -79,7 +79,7 @@ estudiante = {
 }
 
 
-class FormEstudiantesDesign:
+class FormEstudiantesVistaProfesor:
     
     def __init__(self, panel_principal):
         
@@ -99,7 +99,6 @@ class FormEstudiantesDesign:
         self.barra_superior.grid_columnconfigure(2, weight=1)  # Espaciador
         self.barra_superior.grid_columnconfigure(3, weight=2)  # Barra de búsqueda
         self.barra_superior.grid_columnconfigure(4, weight=1)  # Botón "Buscar"
-        self.barra_superior.grid_columnconfigure(5, weight=1)  # Botón "Inhabilitados"
                 
         # Sección de selección de grado
         self.lbl_grade_select = CTkLabel(
@@ -161,16 +160,6 @@ class FormEstudiantesDesign:
         )
         self.btn_search.grid(row=1, column=4, sticky="w", padx=(0,10), pady=5)
 
-        # Botón "Inhabilitados"
-        self.btn_inhabilitados = CTkButton(
-            self.barra_superior,
-            text="Inhabilitados",
-            command=self.ver_inhabilitados,  # Define este método más abajo
-            fg_color="#CDCDCD", 
-            text_color="#65558F",
-            hover_color= "#B3A6D6"
-        )
-        self.btn_inhabilitados.grid(row=0, column=5, sticky="e", padx=30, pady=5)
         
         self.cuerpo_estudiantes = tk.Frame(self.panel_principal, background="white")
         self.cuerpo_estudiantes.pack(side=tk.TOP, fill=tk.X, expand=False)
@@ -198,10 +187,7 @@ class FormEstudiantesDesign:
             print("Por favor, ingrese un término para buscar.")
 
         # Método para manejar inhabilitados
-    def ver_inhabilitados(self):
-        print("Mostrando elementos inhabilitados.")
-        # Agrega aquí la lógica para mostrar elementos inhabilitados
-    
+
     def vista_detallada(self, estudiante):
         print("Mostrando vista detallada.")
         # Limpiar el panel principal para mostrar la vista detallada con los nuevos datos
@@ -242,15 +228,6 @@ class FormEstudiantesDesign:
             text_color=COLOR_FONT_PURPLE,
         )
         self.lbl_title.grid(row=0, column=0, padx=20, pady=10)
-        self.boton_editar = CTkButton(
-            self.barra_superior,
-            text="Editar",
-            width=100,
-            command=lambda: self.editar(estudiante),
-            fg_color=COLOR_FONT_PURPLE,
-            text_color="white",
-        )
-        self.boton_editar.place(relx=1.0, x=-20, y=10, anchor="ne")
 
         # Grado al que pertenece
         self.lbl_grade_select = CTkLabel(
@@ -268,29 +245,6 @@ class FormEstudiantesDesign:
             text_color=COLOR_FONT_BLACK,
         )
         self.lbl_grade.grid(row=2, column=0, padx=10, pady=5)
-
-        # Fecha de matrícula e inicio del año
-        self.label_fecha_Matricula = CTkLabel(
-            self.barra_superior,
-            font=("Arial", 16, "bold"),
-            text="Fecha de matricula:",
-            text_color=COLOR_FONT_BLACK,
-        )
-        self.label_fecha_Matricula.grid(
-            column=1,
-            row=1,
-            padx=10,
-            pady=2,
-            sticky="w",
-        )
-
-        cal_fecha_Matricula = CTkLabel(
-            self.barra_superior,
-            font=("Arial", 16),
-            text="XXX",
-            text_color=COLOR_FONT_BLACK,
-        ) 
-        cal_fecha_Matricula.grid(row=2, column=1, padx=10, pady=10, sticky="w")
 
         # Fecha de inicio del año
         self.label_Inicio_Año = CTkLabel(
@@ -322,14 +276,14 @@ class FormEstudiantesDesign:
 
         # Frame de Imagen
         self.frame_imagen = tk.Frame(
-            self.Datos_personales, bg="white", width=300, height=300
+            self.Datos_personales, bg="white", width=100, height=100
         )
         self.frame_imagen.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         
         # Verifica si la ruta de la imagen existe y carga la imagen
         try:
             imagen_estudiante = Image.open(estudiante["Datos personales"]["imagen"])
-            imagen_estudiante.resize((300, 300))  # Ajusta el tamaño de la imagen
+            imagen_estudiante.thumbnail((100, 100))  # Ajusta el tamaño de la imagen
             img = ImageTk.PhotoImage(imagen_estudiante)
             imagen_label = CTkLabel(self.frame_imagen, image=img, text="")
             imagen_label.image = img  # Guardar una referencia de la imagen
@@ -377,40 +331,6 @@ class FormEstudiantesDesign:
         self.agregar_label(self.frame_derecha, "Discapacidad Fisica:", estudiante["informacion_medica"]["discapacidad_fisica"],2)
         self.agregar_label(self.frame_derecha, "Tipo de sangre:", estudiante["informacion_medica"]["tipo_sangre"], 3)
         
-        # <<<<<<<<<<<<<<<<<<<<<<<<<<< SECCION INFORMACION DE LOS PADRES >>>>>>>>>>>>>>
-        self.Datos_Padres = tk.Frame(self.content_frame, background="white")
-        self.Datos_Padres.pack(padx=10, pady=(10, 5), fill=tk.BOTH, expand=True)
-        # --- Información de los Padres ---
-        self.label_InformacionP = CTkLabel(
-            self.Datos_Padres,
-            text="Información de los Padres:",
-            font=("Arial", 28, "bold"),
-            text_color=COLOR_FONT_PURPLE,
-        )
-        self.label_InformacionP.grid(row=0, column=0, padx=0, pady=5)
-        
-        # Frame para los campos de la madre
-        self.frame_madre = tk.Frame(self.Datos_Padres, background="white")
-        self.frame_madre.grid(padx=5, pady=(5, 5), sticky="w", row=1, column=0)
-        
-        self.agregar_label(self.frame_madre, "Nombre:", estudiante["madre"]["nombre"], 0)
-        self.agregar_label(self.frame_madre, "Edad:", estudiante["madre"]["edad"], 1)
-        self.agregar_label(self.frame_madre, "Profesión:", estudiante["madre"]["ocupacion"], 2)
-        self.agregar_label(self.frame_madre, "Correo:", estudiante["madre"]["correo"], 3)
-        self.agregar_label(self.frame_madre, "Telefono:", estudiante["madre"]["telefono"],4)
-        self.agregar_label(self.frame_madre, "Dirección:", estudiante["madre"]["direccion"], 5)
-        
-        # Frame para los campos del padre
-        self.frame_padre = tk.Frame(self.Datos_Padres, background="white")
-        self.frame_padre.grid(padx=5, pady=(5, 5), sticky="e", row=1, column=1)
-        
-        self.agregar_label(self.frame_padre, "Nombre:", estudiante["padre"]["nombre"],0)
-        self.agregar_label(self.frame_padre, "Edad:", estudiante["padre"]["edad"], 1)
-        self.agregar_label(self.frame_padre, "Profesión:", estudiante["padre"]["ocupacion"], 2)
-        self.agregar_label(self.frame_padre, "Correo:", estudiante["padre"]["correo"], 3)
-        self.agregar_label(self.frame_padre, "Telefono:", estudiante["padre"]["telefono"], 4)
-        self.agregar_label(self.frame_padre, "Dirección:", estudiante["padre"]["direccion"], 5)
-        
         # <<<<<<<<<<<<<<<<<<<<<<<<<<<< SECCIÓN ACUDIENTE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         # Frame para los datos del acudiente
         self.frame_acudiente = tk.Frame(self.content_frame, background="white")
@@ -430,65 +350,114 @@ class FormEstudiantesDesign:
         self.agregar_label(self.frame_acudiente, "Correo:", estudiante["acudiente"]["correo"], 3)
         self.agregar_label(self.frame_acudiente, "Dirección:", estudiante["acudiente"]["direccion"], 4)
         
-        # <<<<<<<<<<<<<<<<<<<<<<<<<<<< DOCUMENTOS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        # Parte inferior: Frame de documentos
-        # Parte inferior: Frame de documentos
-        self.frame_documentos = tk.Frame(self.content_frame, bg="white")
-        self.frame_documentos.pack(padx=10, pady=(5, 5), fill=tk.BOTH, expand=True)
+        # <<<<<<<<<<<<<<<<<<<<<<<<<<< SECCIÓN DE COMENTARIOS >>>>>>>>>>>>>>>>>>>>>>>>>>
+        self.frame_comentarios = tk.Frame(self.content_frame, background="white")
+        self.frame_comentarios.pack(padx=10, pady=(10, 10), fill=tk.BOTH, expand=True)
 
-        # Título de la sección de documentos
-        self.label_documentos = CTkLabel(
-            self.frame_documentos,
-            text="Documentos Subidos",
-            font=("Arial", 20, "bold"),
+        # Título
+        self.label_comentarios = CTkLabel(
+            self.frame_comentarios,
+            text="Comentarios",
+            font=("Arial", 28, "bold"),
             text_color=COLOR_FONT_PURPLE,
         )
-        self.label_documentos.grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        self.label_comentarios.pack(pady=(0, 10))
 
-        # Crear etiquetas y botones de descarga para cada documento
-        self.crear_documento_descarga(self.frame_documentos, "Tarjeta de identidad:", estudiante["documentos"]["cedula"], 1)
-        self.crear_documento_descarga(self.frame_documentos, "Registro civil:", estudiante["documentos"]["certificado_nacimiento"], 2)
-        self.crear_documento_descarga(self.frame_documentos, "Boletines:", estudiante["documentos"]["boletines"], 3)
-        self.crear_documento_descarga(self.frame_documentos, "Historia clínica:", estudiante["documentos"]["historia_clinica"], 4)
-
-    # Método que crea la etiqueta y el botón de descarga
-    def crear_documento_descarga(self, frame, label_text, documento_path, row):
-        """Crea la etiqueta y el botón de descarga para un documento."""
-        fila = tk.Frame(frame, bg="white")
-        fila.grid(row=row, column=0, sticky="w", padx=5, pady=2)
-
-        # Etiqueta para el nombre del documento
-        label = CTkLabel(fila, font=("Arial", 16), text=label_text, text_color=COLOR_FONT_BLACK)
-        label.pack(side=tk.LEFT, padx=5)
-
-        # Botón de descarga
-        download_button = CTkButton(fila, 
-            text="Descargar", 
-            command=lambda path=documento_path: self.descargar_documento(path),
-            fg_color="#65558F", 
-            text_color="white", 
-            hover_color="#B3A6D6"
+        # Entrada de texto para comentarios
+        self.entry_comentario = CTkEntry(
+            self.frame_comentarios,
+            placeholder_text="Escribe tu comentario aquí...",
+            width=600,
+            height=60,
+            font=("Arial", 14),
+            fg_color="#f0f0f0",
+            text_color=COLOR_FONT_BLACK,
         )
-        download_button.pack(side=tk.LEFT, padx=10)
+        self.entry_comentario.pack(pady=(0, 10))
 
-    # Método para descargar el documento
-    def descargar_documento(self, path):
-        """Método para descargar el archivo del documento."""
-        try:
-            # Aquí puedes utilizar filedialog para pedir la ubicación donde guardar el archivo
-            destino = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF files", "*.pdf")])
+        # Botón para guardar comentario
+        self.btn_guardar_comentario = CTkButton(
+            self.frame_comentarios,
+            text="Guardar Comentario",
+            fg_color=COLOR_FONT_PURPLE,
+            text_color="white",
+            hover_color="#B3A6D6",
+            command=self.guardar_comentario,
+            font=("Arial", 12),
+        )
+        self.btn_guardar_comentario.pack(pady=(0, 10))
+
+        # Frame para mostrar comentarios guardados
+        self.frame_lista_comentarios = tk.Frame(self.frame_comentarios, background="white")
+        self.frame_lista_comentarios.pack(fill=tk.BOTH, expand=True)
+
+    # Método para guardar comentarios
+    def guardar_comentario(self):
+        comentario = self.entry_comentario.get().strip()
+        if comentario:
+            from datetime import datetime
+            fecha_hora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+            # Contenedor individual para el comentario
+            comentario_frame = CTkFrame(
+                self.frame_lista_comentarios,
+                fg_color="#f0f0f0",
+                corner_radius=10,
+                border_color="#cccccc",
+                border_width=1
+            )
+            comentario_frame.pack(pady=5, padx=10, fill=tk.X)
+
+            # Mostrar fecha y hora
+            label_fecha = CTkLabel(
+                comentario_frame,
+                text=f"{fecha_hora}",
+                font=("Arial", 10, "italic"),
+                text_color="#777"
+            )
+            label_fecha.pack(anchor="w", pady=(5, 0), padx=10)
+
+            # Mostrar el texto del comentario
+            label_texto = CTkLabel(
+                comentario_frame,
+                text=comentario,
+                font=("Arial", 12),
+                text_color="#333",
+                wraplength=350,
+                anchor="w",
+                justify="left"
+            )
+            label_texto.pack(anchor="w", pady=(0, 10), padx=10)
+            # Botón para eliminar el comentario
+            btn_eliminar = CTkButton(
+                comentario_frame,
+                text="Eliminar",
+                fg_color="#FF4D4D",
+                text_color="white",
+                hover_color="#FF9999",
+                command=lambda: self.eliminar_comentario(comentario_frame),
+                font=("Arial", 10)
+            )
+            btn_eliminar.pack(anchor="e", padx=10, pady=(0, 10))
+
+            # Mostrar mensaje de confirmación
+            messagebox.showinfo("Comentario Guardado", "El comentario ha sido guardado exitosamente.")
+            # Limpiar el Entry después de guardar el comentario
+            self.entry_comentario.delete(0, tk.END)
+        else:
+            messagebox.showwarning("Advertencia", "El comentario no puede estar vacío.")
             
-            if destino:
-                # Aquí deberías copiar o mover el archivo de la ruta original a la ruta destino
-                # Usaremos shutil para mover el archivo (asegúrate de importar shutil)
-                import shutil
-                shutil.copy(path, destino)  # Copia el archivo al destino seleccionado
-                messagebox.showinfo("Éxito", f"Documento descargado en: {destino}")
-            else:
-                messagebox.showwarning("Error", "No se seleccionó un destino para guardar el archivo.")
-        except Exception as e:
-            messagebox.showerror("Error", f"No se pudo descargar el archivo. Error: {e}")
+    # Método para confirmar y eliminar un comentario
+    def eliminar_comentario(self, comentario_frame):
+        respuesta = messagebox.askquestion(
+            "Confirmar Eliminación",
+            "¿Estás seguro de que deseas eliminar este comentario?"
+        )
+        if respuesta == "yes":
+            comentario_frame.destroy()
+            messagebox.showinfo("Comentario Eliminado", "El comentario ha sido eliminado.")
 
+        
             
     def agregar_label(self, frame, label_text, value_text, row):
         """Agrega una fila con un texto y su valor en el layout utilizando pack."""
@@ -531,8 +500,5 @@ class FormEstudiantesDesign:
         # Limpiar el panel principal para mostrar la vista detallada con los nuevos datos
         for widget in self.panel_principal.winfo_children():
             widget.destroy()  # Elimina todos los widgets del panel actual
-        
-        #aun esta en proceso la idea es llamar al formulario matriculas y que desde alla se edite y luego vuelva a estudiantes 
-        #Hay que hacerlo directamente con la base de datos
         
         
