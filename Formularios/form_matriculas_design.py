@@ -2,7 +2,7 @@ import tkinter as tk
 from util.util_imagenes import leer_imagen
 from tkcalendar import DateEntry
 from tkinter import filedialog
-from tkinter import messagebox
+from tkinter import messagebox as mb
 from tkinter import StringVar
 import re
 from PIL import Image, ImageTk
@@ -26,7 +26,8 @@ from customtkinter import (
     CTkImage,
     CTkRadioButton,
 )
-
+import mysql.connector
+from mysql.connector import Error
 
 class FormMatriculasDesign:
 
@@ -315,7 +316,7 @@ class FormMatriculasDesign:
         self.Fecha_Nacimiento.grid(column=0, row=2, sticky="w")
 
         # Crear y colocar el selector de fecha
-        cal = DateEntry(
+        self.cal = DateEntry(
             self.texto_frame,
             width=18,
             background=COLOR_FONT_WHITE,
@@ -327,7 +328,7 @@ class FormMatriculasDesign:
             font=("Arial", 10),
             state="readonly",
         )
-        cal.grid(row=3, column=0, padx=5, pady=2, sticky="w")
+        self.cal.grid(row=3, column=0, padx=5, pady=2, sticky="w")
 
         # Lugar de nacimiento
         self.Lugar_Nacimiento = CTkLabel(
@@ -1364,6 +1365,23 @@ class FormMatriculasDesign:
         self.direccion_acudiente_entry.grid(
             row=4, column=1, padx=10, pady=10, sticky="w"
         )
+        
+        self.buton_Agregar_Nueva_matricula = CTkButton(
+            self.content_frame,
+            text="Guardar Nueva Matricula",
+            font=("JasmineUPC", 16),
+            border_color=COLOR_MENU_LATERAL,
+            fg_color=COLOR_BARRA_SUPERIOR,
+            hover_color=COLOR_MENU_LATERAL,
+            corner_radius=12,
+            border_width=2,
+            height=35,
+            width=180,
+            command=self.agregarMatricula
+        )
+        self.buton_Agregar_Nueva_matricula.pack(
+            padx=10, pady=(20, 20), fill=tk.BOTH, expand=True, anchor="w"
+        )
 
         # Función para habilitar los campos de texto de acuerdo con la relación seleccionada
         def actualizar_campos_acudiente():
@@ -1419,96 +1437,150 @@ class FormMatriculasDesign:
         self.check_otro.configure(command=actualizar_campos_acudiente)
 
         # <<<<<<<<<<<<<<<<<<<<<< SUBIR DOCUMENTOS >>>>>>>>>>>>>>>>>>>><
-        self.Documentos_label = CTkLabel(
-            self.content_frame,
-            text="Documentación:",
-            font=("Arial", 28, "bold"),
-            text_color=COLOR_FONT_PURPLE,
-        )
-        self.Documentos_label.pack(
-            padx=10, pady=(10, 5), fill=tk.BOTH, expand=True, anchor="w"
-        )
+        #self.Documentos_label = CTkLabel(
+        #    self.content_frame,
+        #    text="Documentación:",
+        #    font=("Arial", 28, "bold"),
+        #    text_color=COLOR_FONT_PURPLE,
+        #)
+        #self.Documentos_label.pack(
+        #    padx=10, pady=(10, 5), fill=tk.BOTH, expand=True, anchor="w"
+        #)
 
-        # Frame para los datos del acudiente
-        self.frame_documentos = tk.Frame(self.content_frame, background="white")
-        self.frame_documentos.pack(padx=10, pady=(5, 5), fill=tk.BOTH, expand=True)
+         # Frame para los datos del acudiente
+        #self.frame_documentos = tk.Frame(self.content_frame, background="white")
+        #self.frame_documentos.pack(padx=10, pady=(5, 5), fill=tk.BOTH, expand=True)
 
-        # Lista de documentos con sus botones para cargar
-        self.documentos = [
-            ("Fotocopia del registro civil", self.cargar_registro_civil),
-            (
-                "Fotocopia de la Tarjeta de Identidad (si es mayor de 7 años)",
-                self.cargar_tarjeta_identidad,
-            ),
-            ("Fotocopia C.C. de Padres y Acudiente", self.cargar_cc_padres_acudiente),
-            ("EPS vigente o Fosyga", self.cargar_eps),
-            ("Recibo de servicio público reciente", self.cargar_recibo_servicio),
-            (
-                "Fotocopia del carnet de vacunas (para primaria y preescolar)",
-                self.cargar_carnet_vacunas,
-            ),
-            ("Boletín de aprobado del año anterior", self.cargar_boletin),
-            ("Certificado de paz y salvo", self.cargar_paz_y_salvo),
-        ]
+         # Lista de documentos con sus botones para cargar
+        #self.documentos = [
+        #    ("Fotocopia del registro civil", self.cargar_registro_civil),
+        #    (
+        #        "Fotocopia de la Tarjeta de Identidad (si es mayor de 7 años)",
+        #        self.cargar_tarjeta_identidad,
+        #    ),
+        #    ("Fotocopia C.C. de Padres y Acudiente", self.cargar_cc_padres_acudiente),
+        #    ("EPS vigente o Fosyga", self.cargar_eps),
+        #    ("Recibo de servicio público reciente", self.cargar_recibo_servicio),
+        #    (
+        #        "Fotocopia del carnet de vacunas (para primaria y preescolar)",
+        #        self.cargar_carnet_vacunas,
+        #    ),
+        #    ("Boletín de aprobado del año anterior", self.cargar_boletin),
+        #    ("Certificado de paz y salvo", self.cargar_paz_y_salvo),
+        #]
 
-        # Crear los frames para cada documento
-        self.documento_labels = {}
-        for documento, funcion in self.documentos:
-            # Título para cada documento
-            documento_label = CTkLabel(
-                self.frame_documentos,
-                text=f"{documento}:",
-                font=("Arial", 14, "bold"),
-                text_color=COLOR_FONT_BLACK,
-            )
-            documento_label.pack(padx=10, pady=(10, 5), anchor="w")
+         # Crear los frames para cada documento
+        #self.documento_labels = {}
+        #for documento, funcion in self.documentos:
+             # Título para cada documento
+        #    documento_label = CTkLabel(
+        #        self.frame_documentos,
+        #        text=f"{documento}:",
+        #        font=("Arial", 14, "bold"),
+        #        text_color=COLOR_FONT_BLACK,
+        #    )
+        #    documento_label.pack(padx=10, pady=(10, 5), anchor="w")
 
-            # Frame para los botones de cargar documentos
-            frame = CTkFrame(self.frame_documentos, fg_color="white")
-            frame.pack(padx=10, pady=(5, 10), fill=tk.BOTH, expand=True)
+             # Frame para los botones de cargar documentos
+        #    frame = CTkFrame(self.frame_documentos, fg_color="white")
+        #    frame.pack(padx=10, pady=(5, 10), fill=tk.BOTH, expand=True)
 
-            # Label para mostrar el nombre del archivo
-            archivo_label = CTkLabel(
-                frame,
-                text="No se ha cargado archivo",
-                fg_color="#CDCDCD",
-                font=("Arial", 12),
-                text_color=COLOR_FONT_BLACK,
-            )
-            archivo_label.pack(side=tk.LEFT, padx=10)
-            self.documento_labels[documento] = archivo_label
+             # Label para mostrar el nombre del archivo
+        #    archivo_label = CTkLabel(
+        #        frame,
+        #        text="No se ha cargado archivo",
+        #        fg_color="#CDCDCD",
+        #        font=("Arial", 12),
+        #        text_color=COLOR_FONT_BLACK,
+        #    )
+        #    archivo_label.pack(side=tk.LEFT, padx=10)
+        #    self.documento_labels[documento] = archivo_label
 
-            # Botón para cargar el archivo
-            boton = CTkButton(
-                frame,
-                text=f"Cargar documento",
-                command=lambda doc=documento: funcion(doc),
-                font=("JasmineUPC", 16),
-                border_color=COLOR_MENU_LATERAL,
-                fg_color=COLOR_MENU_LATERAL,
-                hover_color=COLOR_MENU_LATERAL,
-                corner_radius=12,
-                border_width=2,
-                height=35,
-                width=180,
-            )
-            boton.pack(side=tk.RIGHT)
+             # Botón para cargar el archivo
+        #    boton = CTkButton(
+        #        frame,
+        #        text=f"Cargar documento",
+        #        command=lambda doc=documento: funcion(doc),
+        #        font=("JasmineUPC", 16),
+        #        border_color=COLOR_MENU_LATERAL,
+        #        fg_color=COLOR_MENU_LATERAL,
+        #        hover_color=COLOR_MENU_LATERAL,
+        #        corner_radius=12,
+        #        border_width=2,
+        #        height=35,
+        #        width=180,
+        #    )
+        #    boton.pack(side=tk.RIGHT)
+        
+    def conectar_mysql(self):
+            try:
+                conn = mysql.connector.connect(
+                    host="localhost", user="root", password="", database="giebd"
+                )
+                return conn
+            except mysql.connector.Error as err:
+                mb.showerror("Error de conexión", f"Error al conectar con la base de datos: {err}")
+                return None
+            except Exception as e:
+                mb.showerror("Error desconocido", f"Ocurrió un error inesperado: {e}")
+                return None
+    
+    def agregarMatricula(self):
+        #Recoleccion de datos
+        numidentificacion= self.entry_numero_identificación.get()
+        nombre= self.entry_nombre.get()
+        fnacimiento= self.cal.get_date()
+        Lnacimiento= self.entry_Lugar_Nacimiento.get()
+        telefono= self.entry_telefono.get()
+        genero= self.gender_var.get()
+        direccion= self.entry_direccion.get()
+        gsanguineo= self.grupo_sanguineo_var.get()
+        Nmadre= self.madre_nombre_entry.get()
+        tmadre= self.madre_telefono_entry.get()
+        cmadre= self.madre_correo_entry.get()
+        omadre= self.madre_profesion_entry.get()
+        dmadre= self.madre_direccion_entry.get()
+        Npadre= self.padre_nombre_entry.get()
+        tpadre= self.padre_telefono_entry.get()
+        cpadre= self.padre_correo_entry.get()
+        opadre= self.padre_profesion_entry.get()
+        dpadre= self.padre_direccion_entry.get()
+        grado= self.grado_cursado_var.get()
+        alergias= self.alergia_var.get()
+        discapacidadf= self.discapacidad_fisica_var.get()
+        discapacidadm= self.discapacidad_mental_var.get()
+        medicamento= self.medicamento_entry.get()
+        Nacudiente= self.nombre_acudiente_entry.get()
+        tacudiente= self.telefono_acudiente_entry.get()
+        cacudiente= self.correo_acudiente_entry.get()
+        dacudiente= self.direccion_acudiente_entry.get()
+        relacionacudiente= self.relacion_var.get()
+        
+        # Validación
+        if not all([numidentificacion, nombre,telefono, fnacimiento,Lnacimiento,genero,direccion,gsanguineo,Nmadre,tmadre,cmadre,omadre,dmadre,Npadre,tpadre,cpadre,opadre,dpadre,grado,alergias,discapacidadf,discapacidadm,medicamento,Nacudiente,tacudiente,dacudiente,relacionacudiente,cacudiente]):
+            mb.showwarning("Campos vacíos", "Todos los campos son obligatorios.")
+            return
 
-        self.buton_Agregar_Nueva_matricula = CTkButton(
-            self.content_frame,
-            text="Guardar Nueva Matricula",
-            font=("JasmineUPC", 16),
-            border_color=COLOR_MENU_LATERAL,
-            fg_color=COLOR_BARRA_SUPERIOR,
-            hover_color=COLOR_MENU_LATERAL,
-            corner_radius=12,
-            border_width=2,
-            height=35,
-            width=180,
-        )
-        self.buton_Agregar_Nueva_matricula.pack(
-            padx=10, pady=(20, 20), fill=tk.BOTH, expand=True, anchor="w"
-        )
+        # Conectar a la base de datos
+        conn = self.conectar_mysql()
+        if conn:
+            try:
+                #28 values
+                cursor = conn.cursor()
+                cursor.execute("""
+                    INSERT INTO estudiantes (No_identificacion, Nombre, Fecha_nacimiento, Lugar_nacimiento, Telefono, Genero,Direccion,Grupo_sanguineo,NombreMadre,TelefonoMadre, CorreoMadre, OcupacionMadre, DireccionMadre,NombrePadre,TelefonoPadre,CorreoPadre,OcupacionPadre,DireccionPadre,Grado,Alergias,Discapacidad_fisica,Discapacidad_mental,Medicamentos,NombreAcudiente,TelefonoAcudiente,DireccionAcudiente,RelacionAcudiente,CorreoAcudiente)
+                    VALUES (%s,%s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s) 
+                """, (numidentificacion, nombre,telefono, fnacimiento,Lnacimiento,genero,direccion,gsanguineo,Nmadre,tmadre,cmadre,omadre,dmadre,Npadre,tpadre,cpadre,opadre,dpadre,grado,alergias,discapacidadf,discapacidadm,medicamento,Nacudiente,tacudiente,dacudiente,relacionacudiente,cacudiente))
+                conn.commit()
+                mb.showinfo("Matrícula hecha", "El estudiante ha sido agregado exitosamente.")
+                self.Ventana_formulario_nuevo_usuario.destroy()
+                self.cargarusuarios()  # Recargar la tabla de usuarios
+            except mysql.connector.Error as err:
+                mb.showerror("Error", f"Error al agregar el estudiante: {err}")
+            finally:
+                conn.close()    
+                
+    
 
     # Funcion para cargar foto del estudiante
     def cargar_imagen(self):
@@ -1530,53 +1602,53 @@ class FormMatriculasDesign:
                 self.label_imagen.image = img  # Guardar referencia de la imagen
                 self.label_imagen.pack(pady=10)
 
-    # Función para cargar el documento
-    def cargar_documento(self, nombre_documento):
-        # Abrir un cuadro de diálogo para seleccionar un archivo
-        archivo = filedialog.askopenfilename(
-            title=f"Selecciona {nombre_documento}",
-            filetypes=[("Todos los archivos", "*.*")],
-        )
+     # Función para cargar el documento
+    #def cargar_documento(self, nombre_documento):
+         # Abrir un cuadro de diálogo para seleccionar un archivo
+    #    archivo = filedialog.askopenfilename(
+    #        title=f"Selecciona {nombre_documento}",
+    #        filetypes=[("Todos los archivos", "*.*")],
+    #    )
 
-        if archivo:
-            # Actualizar el texto del Label con el nombre del archivo
-            self.documento_labels[nombre_documento].configure(
-                text=archivo.split("/")[-1],
-                fg_color="#a9d39e",
-            )
-            messagebox.showinfo(
-                "Documento Cargado", f"{nombre_documento} cargado exitosamente."
-            )
-        else:
-            messagebox.showwarning(
-                "Advertencia",
-                f"No se seleccionó ningún archivo para {nombre_documento}.",
-            )
+    #    if archivo:
+             # Actualizar el texto del Label con el nombre del archivo
+    #        self.documento_labels[nombre_documento].configure(
+    #            text=archivo.split("/")[-1],
+    #            fg_color="#a9d39e",
+    #        )
+    #        messagebox.showinfo(
+    #            "Documento Cargado", f"{nombre_documento} cargado exitosamente."
+    #        )
+    #    else:
+    #        messagebox.showwarning(
+    #            "Advertencia",
+    #            f"No se seleccionó ningún archivo para {nombre_documento}.",
+    #        )
 
-    # Funciones para cada tipo de documento
-    def cargar_registro_civil(self, documento):
-        self.cargar_documento(documento)
+      # Funciones para cada tipo de documento
+    #def cargar_registro_civil(self, documento):
+    #    self.cargar_documento(documento)
 
-    def cargar_tarjeta_identidad(self, documento):
-        self.cargar_documento(documento)
+    #def cargar_tarjeta_identidad(self, documento):
+    #    self.cargar_documento(documento)
 
-    def cargar_cc_padres_acudiente(self, documento):
-        self.cargar_documento(documento)
+    #def cargar_cc_padres_acudiente(self, documento):
+    #    self.cargar_documento(documento)
 
-    def cargar_eps(self, documento):
-        self.cargar_documento(documento)
+    #def cargar_eps(self, documento):
+    #    self.cargar_documento(documento)
 
-    def cargar_recibo_servicio(self, documento):
-        self.cargar_documento(documento)
+    #def cargar_recibo_servicio(self, documento):
+    #    self.cargar_documento(documento)
 
-    def cargar_carnet_vacunas(self, documento):
-        self.cargar_documento(documento)
+    #def cargar_carnet_vacunas(self, documento):
+    #    self.cargar_documento(documento)
 
-    def cargar_boletin(self, documento):
-        self.cargar_documento(documento)
+    #def cargar_boletin(self, documento):
+    #    self.cargar_documento(documento)
 
-    def cargar_paz_y_salvo(self, documento):
-        self.cargar_documento(documento)
+    #def cargar_paz_y_salvo(self, documento):
+    #    self.cargar_documento(documento)
 
     # <<<<<<<<<<<<!!!!!!! NO TOCAR !!!!!!!!!!!>>>>>>>
     # Método para redimensionar el canvas

@@ -126,6 +126,8 @@ class Login:
         
     def VentanaAdmin(self):
         subprocess.Popen(['python','main.py'])
+    def VentanaProfesor(slef):
+        subprocess.Popen(['python', 'MainProfesores.py'])
     def validardatos(self):
         #Obtener valores ingresados
         usuario= self.Uusuario.get()
@@ -154,8 +156,10 @@ class Login:
                     self.root.quit()
                     self.root.destroy()
                     self.VentanaAdmin()
-                    
-                    
+                else:
+                    self.root.quit()
+                    self.root.destroy()
+                    self.VentanaProfesor()
             else:
                 mb.showerror('Error de inicio de sesión', 'Usuario o contraseña incorrectos')
         except mysql.connector.Error as e:
