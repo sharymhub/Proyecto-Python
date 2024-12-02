@@ -124,12 +124,13 @@ class FormMatriculasDesign:
         )
         lbl_grade_select.grid(row=1, column=0, columnspan=2, sticky="w", padx=10)
 
-        grades = ["Grado 1°", "Grado 2°", "Grado 3°"]
-        grade_var = tk.StringVar(value=grades[0])
+        self.grades = [1,2,3,4,5]
+        self.grade_var = [str(grade) for grade in self.grades]
+        self.gradoacursar_var= tk.StringVar(value=self.grade_var[0])
         menu_grade = CTkOptionMenu(
             self.barra_superior,
-            variable=grade_var,
-            values=grades,
+            variable=self.gradoacursar_var,
+            values=self.grade_var,
             width=200,
             fg_color="#cdcdcd",
             button_color="white",
@@ -344,6 +345,11 @@ class FormMatriculasDesign:
             padx=10,
             pady=(10, 5),
         )
+        self.Lnacimiento= tk.StringVar()
+        #validacion LUGAR de NACIMIENTO
+        def validar_lugarnacimiento(texto):
+            return texto.isalpha() or texto.isspace() or texto== ''
+        validatecommand= (self.texto_frame.register(validar_lugarnacimiento),'%P')
 
         self.entry_Lugar_Nacimiento = CTkEntry(
             self.texto_frame,
@@ -352,6 +358,10 @@ class FormMatriculasDesign:
             fg_color="white",
             text_color=COLOR_FONT_BLACK,
             font=("Arial", 14),
+            textvariable= self.Lnacimiento,
+            validate= 'key',
+            validatecommand= validatecommand,
+            
         )
         self.entry_Lugar_Nacimiento.grid(
             column=1,
@@ -417,6 +427,7 @@ class FormMatriculasDesign:
             padx=10,
             pady=(10, 5),
         )
+        
 
         self.entry_telefono = CTkEntry(
             self.texto_frame,
@@ -529,12 +540,13 @@ class FormMatriculasDesign:
             text_color=COLOR_FONT_BLACK,
         )
         self.label_grado_cursado.grid(row=3, column=0, sticky="w", padx=10)
-        self.grades = ["Grado 1°", "Grado 2°", "Grado 3°", "Grado 4°", "Grado 5"]
-        self.grado_cursado_var = tk.StringVar(value=grades[0])
+        self.grades = [1,2,3,4,5]
+        self.grades_str= [str(grade)for grade in self.grades]
+        self.grado_cursado_var= tk.StringVar(value= self.grades_str[0])
         self.menu_grado_cursado = CTkOptionMenu(
             self.Datos_academicos,
             variable=self.grado_cursado_var,
-            values=self.grades,
+            values=self.grades_str,
             width=200,
             fg_color="#cdcdcd",
             button_color="white",
@@ -575,10 +587,10 @@ class FormMatriculasDesign:
             font=("Arial", 28, "bold"),
             text_color=COLOR_FONT_PURPLE,
         )
-        self.label_Informacion.grid(row=0, column=0, padx=10, pady=5)
+        self.label_Informacion.grid(row=0, column=0, padx=5, pady=5)
 
         self.frame_izquierda = tk.Frame(self.Datos_medicos, background="white")
-        self.frame_izquierda.grid(padx=5, pady=(5, 5), sticky="w", row=1, column=0)
+        self.frame_izquierda.grid(padx=5, sticky="w", row=1, column=0)
 
         # --- Alergias ---
         self.alergias_label = CTkLabel(
@@ -589,71 +601,20 @@ class FormMatriculasDesign:
         )
         self.alergias_label.grid(row=0, column=0, padx=10, pady=10, sticky="w")
 
-        # Variable para almacenar la selección de los Checkbuttons
-        self.alergia_var = StringVar(value="No")
+        # Variable para almacenar la entrada del usuario
+        self.alergia_var = StringVar()
 
-        # Checkbuttons para "Sí" y "No"
-        self.check_si = CTkRadioButton(
-            self.frame_izquierda,
-            text="Sí",
-            variable=self.alergia_var,
-            value="Sí",
-            font=("Arial", 12),
-            text_color=COLOR_FONT_BLACK,  # Color del texto
-            hover_color=COLOR_MENU_CURSOR_ENCIMA,  # Color cuando el cursor pasa sobre el botón
-            fg_color=COLOR_FONT_PURPLE,  # Color de fondo del radio button
-            border_color=COLOR_FONT_BLACK,  # Color del borde
-            corner_radius=10,
-        )
-        self.check_si.grid(row=0, column=1, padx=(10, 2), pady=10, sticky="w")
-
-        self.check_no = CTkRadioButton(
-            self.frame_izquierda,
-            text="No",
-            variable=self.alergia_var,
-            value="No",
-            font=("Arial", 12),
-            text_color=COLOR_FONT_BLACK,  # Color del texto
-            hover_color=COLOR_MENU_CURSOR_ENCIMA,  # Color cuando el cursor pasa sobre el botón
-            fg_color=COLOR_FONT_PURPLE,  # Color de fondo del radio button
-            border_color=COLOR_FONT_BLACK,  # Color del borde
-            corner_radius=10,
-        )
-        self.check_no.grid(row=0, column=2, padx=(2, 10), pady=10, sticky="w")
-
-        # Etiqueta para "¿Cuál?" que aparece solo si se selecciona "Sí"
-        self.cual_label = CTkLabel(
-            self.frame_izquierda,
-            text="¿Cuál?",
-            font=("Arial", 14, "bold"),
-            text_color=COLOR_FONT_BLACK,
-        )
-        self.cual_label.grid(row=0, column=3, padx=(10, 10), pady=10, sticky="w")
-
-        # Entry para ingresar el nombre de la alergia (si la respuesta es "Sí")
+        # Entry para ingresar alergias
         self.alergia_entry = CTkEntry(
             self.frame_izquierda,
-            font=("Arial", 12),
+            textvariable=self.alergia_var,
             width=250,
-            text_color=COLOR_FONT_BLACK,
+            font=("Arial", 12),
             border_color=COLOR_FONT_PURPLE,
             fg_color="white",
+            text_color=COLOR_FONT_BLACK,
         )
-        self.alergia_entry.grid(row=0, column=4, padx=0, pady=10, sticky="w")
-
-        # Función para habilitar o deshabilitar el Entry y el Label "¿Cuál?" según la selección
-        def toggle_entry():
-            if self.alergia_var.get() == "Sí":
-                self.cual_label.configure(state="normal")
-                self.alergia_entry.configure(state="normal")
-            else:
-                self.cual_label.configure(state="disabled")
-                self.alergia_entry.configure(state="disabled")
-
-        # Asignar la función a los botones de opción
-        self.check_si.configure(command=toggle_entry)
-        self.check_no.configure(command=toggle_entry)
-
+        self.alergia_entry.grid(row=0, column=1, padx=(10, 10), pady=10, sticky="w")
         # --- Enfermedades Crónicas ---
         self.enfermedades_label = CTkLabel(
             self.frame_izquierda,
@@ -663,50 +624,6 @@ class FormMatriculasDesign:
         )
         self.enfermedades_label.grid(row=1, column=0, padx=10, pady=10, sticky="w")
 
-        self.enfermedades_var = StringVar(value="No")
-
-        self.check_si_enfermedad = CTkRadioButton(
-            self.frame_izquierda,
-            text="Sí",
-            variable=self.enfermedades_var,
-            value="Sí",
-            font=("Arial", 12),
-            text_color=COLOR_FONT_BLACK,
-            hover_color=COLOR_MENU_CURSOR_ENCIMA,
-            fg_color=COLOR_FONT_PURPLE,
-            border_color=COLOR_FONT_BLACK,
-            corner_radius=10,
-        )
-        self.check_si_enfermedad.grid(
-            row=1, column=1, padx=(10, 2), pady=10, sticky="w"
-        )
-
-        self.check_no_enfermedad = CTkRadioButton(
-            self.frame_izquierda,
-            text="No",
-            variable=self.enfermedades_var,
-            value="No",
-            font=("Arial", 12),
-            text_color=COLOR_FONT_BLACK,
-            hover_color=COLOR_MENU_CURSOR_ENCIMA,
-            fg_color=COLOR_FONT_PURPLE,
-            border_color=COLOR_FONT_BLACK,
-            corner_radius=10,
-        )
-        self.check_no_enfermedad.grid(
-            row=1, column=2, padx=(2, 10), pady=10, sticky="w"
-        )
-
-        self.cual_label_enfermedad = CTkLabel(
-            self.frame_izquierda,
-            text="¿Cuál?",
-            font=("Arial", 14, "bold"),
-            text_color=COLOR_FONT_BLACK,
-        )
-        self.cual_label_enfermedad.grid(
-            row=1, column=3, padx=(10, 10), pady=10, sticky="w"
-        )
-
         self.enfermedad_entry = CTkEntry(
             self.frame_izquierda,
             font=("Arial", 12),
@@ -715,18 +632,7 @@ class FormMatriculasDesign:
             border_color=COLOR_FONT_PURPLE,
             fg_color="white",
         )
-        self.enfermedad_entry.grid(row=1, column=4, padx=0, pady=10, sticky="w")
-
-        def toggle_entry_enfermedad():
-            if self.enfermedades_var.get() == "Sí":
-                self.cual_label_enfermedad.configure(state="normal")
-                self.enfermedad_entry.configure(state="normal")
-            else:
-                self.cual_label_enfermedad.configure(state="disabled")
-                self.enfermedad_entry.configure(state="disabled")
-
-        self.check_si_enfermedad.configure(command=toggle_entry_enfermedad)
-        self.check_no_enfermedad.configure(command=toggle_entry_enfermedad)
+        self.enfermedad_entry.grid(row=1, column=1, padx=(10,10), pady=10, sticky="w")
 
         # --- Toma Medicamentos ---
         self.medicamentos_label = CTkLabel(
@@ -737,50 +643,6 @@ class FormMatriculasDesign:
         )
         self.medicamentos_label.grid(row=2, column=0, padx=10, pady=10, sticky="w")
 
-        self.medicamentos_var = StringVar(value="No")
-
-        self.check_si_medicamento = CTkRadioButton(
-            self.frame_izquierda,
-            text="Sí",
-            variable=self.medicamentos_var,
-            value="Sí",
-            font=("Arial", 12),
-            text_color=COLOR_FONT_BLACK,
-            hover_color=COLOR_MENU_CURSOR_ENCIMA,
-            fg_color=COLOR_FONT_PURPLE,
-            border_color=COLOR_FONT_BLACK,
-            corner_radius=10,
-        )
-        self.check_si_medicamento.grid(
-            row=2, column=1, padx=(10, 2), pady=10, sticky="w"
-        )
-
-        self.check_no_medicamento = CTkRadioButton(
-            self.frame_izquierda,
-            text="No",
-            variable=self.medicamentos_var,
-            value="No",
-            font=("Arial", 12),
-            text_color=COLOR_FONT_BLACK,
-            hover_color=COLOR_MENU_CURSOR_ENCIMA,
-            fg_color=COLOR_FONT_PURPLE,
-            border_color=COLOR_FONT_BLACK,
-            corner_radius=10,
-        )
-        self.check_no_medicamento.grid(
-            row=2, column=2, padx=(2, 10), pady=10, sticky="w"
-        )
-
-        self.cual_label_medicamento = CTkLabel(
-            self.frame_izquierda,
-            text="¿Cuál?",
-            font=("Arial", 14, "bold"),
-            text_color=COLOR_FONT_BLACK,
-        )
-        self.cual_label_medicamento.grid(
-            row=2, column=3, padx=(10, 10), pady=10, sticky="w"
-        )
-
         self.medicamento_entry = CTkEntry(
             self.frame_izquierda,
             font=("Arial", 12),
@@ -789,18 +651,7 @@ class FormMatriculasDesign:
             border_color=COLOR_FONT_PURPLE,
             fg_color="white",
         )
-        self.medicamento_entry.grid(row=2, column=4, padx=0, pady=10, sticky="w")
-
-        def toggle_entry_medicamento():
-            if self.medicamentos_var.get() == "Sí":
-                self.cual_label_medicamento.configure(state="normal")
-                self.medicamento_entry.configure(state="normal")
-            else:
-                self.cual_label_medicamento.configure(state="disabled")
-                self.medicamento_entry.configure(state="disabled")
-
-        self.check_si_medicamento.configure(command=toggle_entry_medicamento)
-        self.check_no_medicamento.configure(command=toggle_entry_medicamento)
+        self.medicamento_entry.grid(row=2, column=1, padx=(10,10), pady=10, sticky="w")
 
         # --- Discapacidad Física ---
         self.discapacidad_fisica_label = CTkLabel(
@@ -813,44 +664,6 @@ class FormMatriculasDesign:
             row=3, column=0, padx=10, pady=10, sticky="w"
         )
 
-        self.discapacidad_fisica_var = StringVar(value="No")
-
-        self.check_si_fisica = CTkRadioButton(
-            self.frame_izquierda,
-            text="Sí",
-            variable=self.discapacidad_fisica_var,
-            value="Sí",
-            font=("Arial", 12),
-            text_color=COLOR_FONT_BLACK,
-            hover_color=COLOR_MENU_CURSOR_ENCIMA,
-            fg_color=COLOR_FONT_PURPLE,
-            border_color=COLOR_FONT_BLACK,
-            corner_radius=10,
-        )
-        self.check_si_fisica.grid(row=3, column=1, padx=(10, 2), pady=10, sticky="w")
-
-        self.check_no_fisica = CTkRadioButton(
-            self.frame_izquierda,
-            text="No",
-            variable=self.discapacidad_fisica_var,
-            value="No",
-            font=("Arial", 12),
-            text_color=COLOR_FONT_BLACK,
-            hover_color=COLOR_MENU_CURSOR_ENCIMA,
-            fg_color=COLOR_FONT_PURPLE,
-            border_color=COLOR_FONT_BLACK,
-            corner_radius=10,
-        )
-        self.check_no_fisica.grid(row=3, column=2, padx=(2, 10), pady=10, sticky="w")
-
-        self.cual_label_fisica = CTkLabel(
-            self.frame_izquierda,
-            text="¿Cuál?",
-            font=("Arial", 14, "bold"),
-            text_color=COLOR_FONT_BLACK,
-        )
-        self.cual_label_fisica.grid(row=3, column=3, padx=(10, 10), pady=10, sticky="w")
-
         self.fisica_entry = CTkEntry(
             self.frame_izquierda,
             font=("Arial", 12),
@@ -859,18 +672,7 @@ class FormMatriculasDesign:
             border_color=COLOR_FONT_PURPLE,
             fg_color="white",
         )
-        self.fisica_entry.grid(row=3, column=4, padx=0, pady=10, sticky="w")
-
-        def toggle_entry_fisica():
-            if self.discapacidad_fisica_var.get() == "Sí":
-                self.cual_label_fisica.configure(state="normal")
-                self.fisica_entry.configure(state="normal")
-            else:
-                self.cual_label_fisica.configure(state="disabled")
-                self.fisica_entry.configure(state="disabled")
-
-        self.check_si_fisica.configure(command=toggle_entry_fisica)
-        self.check_no_fisica.configure(command=toggle_entry_fisica)
+        self.fisica_entry.grid(row=3, column=1, padx=(10,10), pady=10, sticky="w")
 
         # --- Discapacidad Mental ---
         self.discapacidad_mental_label = CTkLabel(
@@ -882,45 +684,7 @@ class FormMatriculasDesign:
         self.discapacidad_mental_label.grid(
             row=4, column=0, padx=10, pady=10, sticky="w"
         )
-
-        self.discapacidad_mental_var = StringVar(value="No")
-
-        self.check_si_mental = CTkRadioButton(
-            self.frame_izquierda,
-            text="Sí",
-            variable=self.discapacidad_mental_var,
-            value="Sí",
-            font=("Arial", 12),
-            text_color=COLOR_FONT_BLACK,
-            hover_color=COLOR_MENU_CURSOR_ENCIMA,
-            fg_color=COLOR_FONT_PURPLE,
-            border_color=COLOR_FONT_BLACK,
-            corner_radius=10,
-        )
-        self.check_si_mental.grid(row=4, column=1, padx=(10, 2), pady=10, sticky="w")
-
-        self.check_no_mental = CTkRadioButton(
-            self.frame_izquierda,
-            text="No",
-            variable=self.discapacidad_mental_var,
-            value="No",
-            font=("Arial", 12),
-            text_color=COLOR_FONT_BLACK,
-            hover_color=COLOR_MENU_CURSOR_ENCIMA,
-            fg_color=COLOR_FONT_PURPLE,
-            border_color=COLOR_FONT_BLACK,
-            corner_radius=10,
-        )
-        self.check_no_mental.grid(row=4, column=2, padx=(2, 10), pady=10, sticky="w")
-
-        self.cual_label_mental = CTkLabel(
-            self.frame_izquierda,
-            text="¿Cuál?",
-            font=("Arial", 14, "bold"),
-            text_color=COLOR_FONT_BLACK,
-        )
-        self.cual_label_mental.grid(row=4, column=3, padx=(10, 10), pady=10, sticky="w")
-
+        
         self.mental_entry = CTkEntry(
             self.frame_izquierda,
             font=("Arial", 12),
@@ -929,18 +693,7 @@ class FormMatriculasDesign:
             border_color=COLOR_FONT_PURPLE,
             fg_color="white",
         )
-        self.mental_entry.grid(row=4, column=4, padx=0, pady=10, sticky="w")
-
-        def toggle_entry_mental():
-            if self.discapacidad_mental_var.get() == "Sí":
-                self.cual_label_mental.configure(state="normal")
-                self.mental_entry.configure(state="normal")
-            else:
-                self.cual_label_mental.configure(state="disabled")
-                self.mental_entry.configure(state="disabled")
-
-        self.check_si_mental.configure(command=toggle_entry_mental)
-        self.check_no_mental.configure(command=toggle_entry_mental)
+        self.mental_entry.grid(row=4, column=1, padx=(10,10), pady=10, sticky="w")
 
         # --- Grupo Sanguíneo ---
         self.grupo_sanguineo_label = CTkLabel(
@@ -1385,41 +1138,51 @@ class FormMatriculasDesign:
 
         # Función para habilitar los campos de texto de acuerdo con la relación seleccionada
         def actualizar_campos_acudiente():
-            if self.relacion_var.get() == "madre":
-                # Si la relación es madre, deshabilitamos los campos de entrada
-                self.nombre_acudiente_entry.configure(state="disabled")
-                self.telefono_acudiente_entry.configure(state="disabled")
-                self.correo_acudiente_entry.configure(state="disabled")
-                self.direccion_acudiente_entry.configure(state="disabled")
-                # Copiamos los datos de la madre a los campos de entrada si es necesario
+            relacion= self.relacion_var.get()
+            
+            if relacion == "madre":
+                #Copiar datos de la madre y deshabilitar los campos
+                self.nombre_acudiente_entry.configure(state='normal')
                 self.nombre_acudiente_entry.delete(0, tk.END)
-                self.telefono_acudiente_entry.delete(0, tk.END)
-                self.correo_acudiente_entry.delete(0, tk.END)
-                self.direccion_acudiente_entry.delete(0, tk.END)
                 self.nombre_acudiente_entry.insert(0, self.madre_nombre_entry.get())
+                self.nombre_acudiente_entry.configure(state= 'disabled')
+                
+                self.telefono_acudiente_entry.configure(state='normal')
+                self.telefono_acudiente_entry.delete(0, tk.END)
                 self.telefono_acudiente_entry.insert(0, self.madre_telefono_entry.get())
+                self.telefono_acudiente_entry.configure(state= 'disabled')
+                
+                self.correo_acudiente_entry.configure(state='normal')
+                self.correo_acudiente_entry.delete(0, tk.END)
                 self.correo_acudiente_entry.insert(0, self.madre_correo_entry.get())
-                self.direccion_acudiente_entry.insert(
-                    0, self.madre_direccion_entry.get()
-                )
+                self.correo_acudiente_entry.configure(state= 'disabled')
+                
+                self.direccion_acudiente_entry.configure(state='normal')
+                self.direccion_acudiente_entry.delete(0, tk.END)
+                self.direccion_acudiente_entry.insert(0, self.madre_direccion_entry.get())
+                self.direccion_acudiente_entry.configure(state= 'disabled')
 
             elif self.relacion_var.get() == "padre":
-                # Si la relación es padre, deshabilitamos los campos de entrada
-                self.nombre_acudiente_entry.configure(state="disabled")
-                self.telefono_acudiente_entry.configure(state="disabled")
-                self.correo_acudiente_entry.configure(state="disabled")
-                self.direccion_acudiente_entry.configure(state="disabled")
-                # Copiamos los datos del padre a los campos de entrada si es necesario
+                #Copiar datos de la padre y deshabilitar los campos
+                self.nombre_acudiente_entry.configure(state='normal')
                 self.nombre_acudiente_entry.delete(0, tk.END)
-                self.telefono_acudiente_entry.delete(0, tk.END)
-                self.correo_acudiente_entry.delete(0, tk.END)
-                self.direccion_acudiente_entry.delete(0, tk.END)
                 self.nombre_acudiente_entry.insert(0, self.padre_nombre_entry.get())
+                self.nombre_acudiente_entry.configure(state= 'disabled')
+                
+                self.telefono_acudiente_entry.configure(state='normal')
+                self.telefono_acudiente_entry.delete(0, tk.END)
                 self.telefono_acudiente_entry.insert(0, self.padre_telefono_entry.get())
+                self.telefono_acudiente_entry.configure(state= 'disabled')
+                
+                self.correo_acudiente_entry.configure(state='normal')
+                self.correo_acudiente_entry.delete(0, tk.END)
                 self.correo_acudiente_entry.insert(0, self.padre_correo_entry.get())
-                self.direccion_acudiente_entry.insert(
-                    0, self.padre_direccion_entry.get()
-                )
+                self.correo_acudiente_entry.configure(state= 'disabled')
+                
+                self.direccion_acudiente_entry.configure(state='normal')
+                self.direccion_acudiente_entry.delete(0, tk.END)
+                self.direccion_acudiente_entry.insert(0, self.padre_direccion_entry.get())
+                self.direccion_acudiente_entry.configure(state= 'disabled')
 
             elif self.relacion_var.get() == "otro":
                 # Si la relación es otro, habilitamos los campos de entrada
@@ -1428,13 +1191,13 @@ class FormMatriculasDesign:
                 self.correo_acudiente_entry.configure(state="normal")
                 self.direccion_acudiente_entry.configure(state="normal")
 
-        # Llamar a la función de actualización al cargar la página
-        actualizar_campos_acudiente()
 
         # Asignar la función a los botones de opción
         self.check_madre.configure(command=actualizar_campos_acudiente)
         self.check_padre.configure(command=actualizar_campos_acudiente)
         self.check_otro.configure(command=actualizar_campos_acudiente)
+        # Llamar a la función de actualización al cargar la página
+        actualizar_campos_acudiente()
 
         # <<<<<<<<<<<<<<<<<<<<<< SUBIR DOCUMENTOS >>>>>>>>>>>>>>>>>>>><
         #self.Documentos_label = CTkLabel(
@@ -1545,10 +1308,10 @@ class FormMatriculasDesign:
         cpadre= self.padre_correo_entry.get()
         opadre= self.padre_profesion_entry.get()
         dpadre= self.padre_direccion_entry.get()
-        grado= self.grado_cursado_var.get()
-        alergias= self.alergia_var.get()
-        discapacidadf= self.discapacidad_fisica_var.get()
-        discapacidadm= self.discapacidad_mental_var.get()
+        grado= int(self.gradoacursar_var.get())
+        alergias= self.alergia_entry.get()
+        discapacidadf= self.fisica_entry.get()
+        discapacidadm= self.mental_entry.get()
         medicamento= self.medicamento_entry.get()
         Nacudiente= self.nombre_acudiente_entry.get()
         tacudiente= self.telefono_acudiente_entry.get()
@@ -1557,7 +1320,12 @@ class FormMatriculasDesign:
         relacionacudiente= self.relacion_var.get()
         
         # Validación
-        if not all([numidentificacion, nombre,telefono, fnacimiento,Lnacimiento,genero,direccion,gsanguineo,Nmadre,tmadre,cmadre,omadre,dmadre,Npadre,tpadre,cpadre,opadre,dpadre,grado,alergias,discapacidadf,discapacidadm,medicamento,Nacudiente,tacudiente,dacudiente,relacionacudiente,cacudiente]):
+        if not all([
+            numidentificacion, nombre, fnacimiento, Lnacimiento, telefono, genero, direccion,
+            gsanguineo, Nmadre, tmadre, cmadre, omadre, dmadre, Npadre, tpadre , cpadre,
+            opadre, dpadre, grado, alergias, discapacidadf, discapacidadm, medicamento,
+            Nacudiente,tacudiente,dacudiente,relacionacudiente,cacudiente
+        ]):
             mb.showwarning("Campos vacíos", "Todos los campos son obligatorios.")
             return
 
@@ -1565,21 +1333,29 @@ class FormMatriculasDesign:
         conn = self.conectar_mysql()
         if conn:
             try:
-                #28 values
                 cursor = conn.cursor()
+                #Verificar si el numero de identificacion ya existe
+                cursor.execute("SELECT COUNT(*) FROM estudiantes WHERE No_identificacion = %s", (numidentificacion,))
+                if cursor.fetchone()[0] >0 :
+                    mb.showwarning('Duplicado', 'El estudiante ya existe en el sistema')
+                    return
+                # Nuevo Registro
                 cursor.execute("""
                     INSERT INTO estudiantes (No_identificacion, Nombre, Fecha_nacimiento, Lugar_nacimiento, Telefono, Genero,Direccion,Grupo_sanguineo,NombreMadre,TelefonoMadre, CorreoMadre, OcupacionMadre, DireccionMadre,NombrePadre,TelefonoPadre,CorreoPadre,OcupacionPadre,DireccionPadre,Grado,Alergias,Discapacidad_fisica,Discapacidad_mental,Medicamentos,NombreAcudiente,TelefonoAcudiente,DireccionAcudiente,RelacionAcudiente,CorreoAcudiente)
-                    VALUES (%s,%s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s) 
-                """, (numidentificacion, nombre,telefono, fnacimiento,Lnacimiento,genero,direccion,gsanguineo,Nmadre,tmadre,cmadre,omadre,dmadre,Npadre,tpadre,cpadre,opadre,dpadre,grado,alergias,discapacidadf,discapacidadm,medicamento,Nacudiente,tacudiente,dacudiente,relacionacudiente,cacudiente))
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) 
+                """, (
+                    numidentificacion, nombre, fnacimiento, Lnacimiento, telefono, genero, direccion, gsanguineo,
+                    Nmadre, tmadre, cmadre, omadre, dmadre, Npadre, tpadre, cpadre, opadre, dpadre, grado,
+                    alergias, discapacidadf, discapacidadm, medicamento, Nacudiente, tacudiente, dacudiente,
+                    relacionacudiente,cacudiente
+                ))
                 conn.commit()
                 mb.showinfo("Matrícula hecha", "El estudiante ha sido agregado exitosamente.")
-                self.Ventana_formulario_nuevo_usuario.destroy()
-                self.cargarusuarios()  # Recargar la tabla de usuarios
+                
             except mysql.connector.Error as err:
                 mb.showerror("Error", f"Error al agregar el estudiante: {err}")
             finally:
                 conn.close()    
-                
     
 
     # Funcion para cargar foto del estudiante

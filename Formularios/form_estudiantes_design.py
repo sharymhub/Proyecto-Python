@@ -490,83 +490,83 @@ class FormEstudiantesDesign:
         # <<<<<<<<<<<<<<<<<<<<<<<<<<<< DOCUMENTOS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         # Parte inferior: Frame de documentos
         # Parte inferior: Frame de documentos
-        self.frame_documentos = tk.Frame(self.content_frame, bg="white")
-        self.frame_documentos.pack(padx=10, pady=(5, 5), fill=tk.BOTH, expand=True)
+        #self.frame_documentos = tk.Frame(self.content_frame, bg="white")
+        #self.frame_documentos.pack(padx=10, pady=(5, 5), fill=tk.BOTH, expand=True)
 
         # Título de la sección de documentos
-        self.label_documentos = CTkLabel(
-            self.frame_documentos,
-            text="Documentos Subidos",
-            font=("Arial", 20, "bold"),
-            text_color=COLOR_FONT_PURPLE,
-        )
-        self.label_documentos.grid(row=0, column=0, padx=10, pady=5, sticky="w")
+       # self.label_documentos = CTkLabel(
+       #     self.frame_documentos,
+       ##     text="Documentos Subidos",
+        #    font=("Arial", 20, "bold"),
+        #    text_color=COLOR_FONT_PURPLE,
+        #)
+        #self.label_documentos.grid(row=0, column=0, padx=10, pady=5, sticky="w")
 
-        # Crear etiquetas y botones de descarga para cada documento
-        self.crear_documento_descarga(self.frame_documentos, "Tarjeta de identidad:", estudiante["documentos"]["cedula"], 1)
-        self.crear_documento_descarga(self.frame_documentos, "Registro civil:", estudiante["documentos"]["certificado_nacimiento"], 2)
-        self.crear_documento_descarga(self.frame_documentos, "Boletines:", estudiante["documentos"]["boletines"], 3)
-        self.crear_documento_descarga(self.frame_documentos, "Historia clínica:", estudiante["documentos"]["historia_clinica"], 4)
+         # Crear etiquetas y botones de descarga para cada documento
+        #self.crear_documento_descarga(self.frame_documentos, "Tarjeta de identidad:", estudiante["documentos"]["cedula"], 1)
+        #self.crear_documento_descarga(self.frame_documentos, "Registro civil:", estudiante["documentos"]["certificado_nacimiento"], 2)
+        #self.crear_documento_descarga(self.frame_documentos, "Boletines:", estudiante["documentos"]["boletines"], 3)
+        #self.crear_documento_descarga(self.frame_documentos, "Historia clínica:", estudiante["documentos"]["historia_clinica"], 4)
 
     # Método que crea la etiqueta y el botón de descarga
-    def crear_documento_descarga(self, frame, label_text, documento_path, row):
-        """Crea la etiqueta y el botón de descarga para un documento."""
-        fila = tk.Frame(frame, bg="white")
-        fila.grid(row=row, column=0, sticky="w", padx=5, pady=2)
+    #def crear_documento_descarga(self, frame, label_text, documento_path, row):
+    #    """Crea la etiqueta y el botón de descarga para un documento."""
+    #    fila = tk.Frame(frame, bg="white")
+    #   fila.grid(row=row, column=0, sticky="w", padx=5, pady=2)
 
-        # Etiqueta para el nombre del documento
-        label = CTkLabel(fila, font=("Arial", 16), text=label_text, text_color=COLOR_FONT_BLACK)
-        label.pack(side=tk.LEFT, padx=5)
+         # Etiqueta para el nombre del documento
+    #    label = CTkLabel(fila, font=("Arial", 16), text=label_text, text_color=COLOR_FONT_BLACK)
+    #    label.pack(side=tk.LEFT, padx=5)
 
-        # Botón de descarga
-        download_button = CTkButton(fila, 
-            text="Descargar", 
-            command=lambda path=documento_path: self.descargar_documento(path),
-            fg_color="#65558F", 
-            text_color="white", 
-            hover_color="#B3A6D6"
-        )
-        download_button.pack(side=tk.LEFT, padx=10)
+         # Botón de descarga
+    #    download_button = CTkButton(fila, 
+    #        text="Descargar", 
+    #        command=lambda path=documento_path: self.descargar_documento(path),
+    #        fg_color="#65558F", 
+    #        text_color="white", 
+    #        hover_color="#B3A6D6"
+    #    )
+    #    download_button.pack(side=tk.LEFT, padx=10)
 
-    # Método para descargar el documento
-    def descargar_documento(self, path):
-        """Método para descargar el archivo del documento."""
-        try:
-            # Aquí puedes utilizar filedialog para pedir la ubicación donde guardar el archivo
-            destino = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF files", "*.pdf")])
+     # Método para descargar el documento
+    #def descargar_documento(self, path):
+    #    """Método para descargar el archivo del documento."""
+    #    try:
+    #        # Aquí puedes utilizar filedialog para pedir la ubicación donde guardar el archivo
+    #        destino = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF files", "*.pdf")])
+    #        
+    #        if destino:
+    #            # Aquí deberías copiar o mover el archivo de la ruta original a la ruta destino
+    ##            # Usaremos shutil para mover el archivo (asegúrate de importar shutil)
+    #           import shutil
+    #            shutil.copy(path, destino)  # Copia el archivo al destino seleccionado
+    #            mb.showinfo("Éxito", f"Documento descargado en: {destino}")
+    #        else:
+    #            mb.showwarning("Error", "No se seleccionó un destino para guardar el archivo.")
+    #    except Exception as e:
+    #        mb.showerror("Error", f"No se pudo descargar el archivo. Error: {e}")
+
             
-            if destino:
-                # Aquí deberías copiar o mover el archivo de la ruta original a la ruta destino
-                # Usaremos shutil para mover el archivo (asegúrate de importar shutil)
-                import shutil
-                shutil.copy(path, destino)  # Copia el archivo al destino seleccionado
-                mb.showinfo("Éxito", f"Documento descargado en: {destino}")
-            else:
-                mb.showwarning("Error", "No se seleccionó un destino para guardar el archivo.")
-        except Exception as e:
-            mb.showerror("Error", f"No se pudo descargar el archivo. Error: {e}")
+    #def agregar_label(self, frame, label_text, value_text, row):
+    #    """Agrega una fila con un texto y su valor en el layout utilizando pack."""
+    #    # Contenedor horizontal para el texto y valor
+    #    fila = tk.Frame(frame, bg="white")
+    #    fila.pack(fill=tk.X, padx=5, pady=2)
 
-            
-    def agregar_label(self, frame, label_text, value_text, row):
-        """Agrega una fila con un texto y su valor en el layout utilizando pack."""
-        # Contenedor horizontal para el texto y valor
-        fila = tk.Frame(frame, bg="white")
-        fila.pack(fill=tk.X, padx=5, pady=2)
+    ##    # Etiqueta del texto
+     #   label = CTkLabel(
+     #       fila,
+    ##        font=("Arial", 16, "bold"),
+     #       text=label_text,
+     ##       text_color=COLOR_FONT_BLACK,
+      #  )
+     ##   label.pack(side=tk.LEFT, padx=5)
 
-        # Etiqueta del texto
-        label = CTkLabel(
-            fila,
-            font=("Arial", 16, "bold"),
-            text=label_text,
-            text_color=COLOR_FONT_BLACK,
-        )
-        label.pack(side=tk.LEFT, padx=5)
-
-        # Etiqueta del valor
-        value = CTkLabel(
-            fila, font=("Arial", 16), text=value_text, text_color=COLOR_FONT_BLACK
-        )
-        value.pack(side=tk.LEFT, padx=5)
+    #    # Etiqueta del valor
+    ##    value = CTkLabel(
+     #       fila, font=("Arial", 16), text=value_text, text_color=COLOR_FONT_BLACK
+     #   )
+     #   value.pack(side=tk.LEFT, padx=5)
 
     # <<<<<<<<<<<<!!!!!!! NO TOCAR !!!!!!!!!!!>>>>>>>
     # Método para redimensionar el canvas
