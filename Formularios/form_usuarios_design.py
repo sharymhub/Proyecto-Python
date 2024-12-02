@@ -18,7 +18,8 @@ COLOR_BOTON_AGREGAR = "#6a1b9a"
 COLOR_BOTON_CANCELAR = "#757575"
 COLOR_BORDE_ENTRADA = "#8e44ad"
 COLOR_FONDO_TITULO = "#b39ddb"
-COLOR_TEXTO = "#000"
+COLOR_TEXTO = "#000"  # Gris Negro (Muy Oscuro)
+
 import mysql.connector
 
 
@@ -41,11 +42,9 @@ class FormularioUsuariosDesign:
             border_width=2,
             height=40,
             width=200,
-            image=icon,
             compound="left",
             command=self.Editar_Usuario,
         )
-        self.Btn_EditarUsuario.image = icon
         self.Btn_EditarUsuario.pack(side=tk.LEFT, padx=10, pady=10)
 
         self.Btn_NuevoUsuario = CTkButton(
@@ -123,7 +122,13 @@ class FormularioUsuariosDesign:
 
                 # Insertar los datos en la tabla
                 for usuario in usuarios:
-                    self.tabla.insert('', 'end', values=(usuario[0], usuario[1], usuario[2], usuario[3], usuario[4])) 
+                    correo = usuario[0]
+                    nombre_usuario = usuario[1]
+                    contraseña = usuario[2]
+                    telefono = int(usuario[3]) if isinstance(usuario[3], float) and usuario[3].is_integer() else usuario[3]
+                    rol = usuario[4]
+
+                    self.tabla.insert('', 'end', values=(correo, nombre_usuario, contraseña, telefono, rol)) 
 
             except mysql.connector.Error as err:
                 mb.showerror("Error", f"Error al ejecutar consulta: {err}")
@@ -151,11 +156,11 @@ class FormularioUsuariosDesign:
     def Crear_Nuevo_Usuario(self, modo="Nuevo "):
         self.Ventana_formulario_nuevo_usuario = tk.Toplevel()
         self.Ventana_formulario_nuevo_usuario.title(modo.capitalize() + "usuario")
-        self.Ventana_formulario_nuevo_usuario.geometry("300x480+1100+400")
+        self.Ventana_formulario_nuevo_usuario.geometry("300x480+550+300")
         self.Ventana_formulario_nuevo_usuario.configure(bg="white")
 
         # Eliminar la barra de título y los controles de la ventana
-        self.Ventana_formulario_nuevo_usuario.overrideredirect(True)
+        self.Ventana_formulario_nuevo_usuario.overrideredirect(False)
 
         # Encabezado de la ventana
         self.frame_titulo = CTkFrame(
@@ -280,7 +285,7 @@ class FormularioUsuariosDesign:
         
         
      # //////// EDITAR USUARIO /////////   
-    def Editar_Usuario(self):
+    def Editar_Usuario(self, modo="Editar "):
         # Llamar a Crear_Nuevo_Usuario pero en modo editar
         #self.Crear_Nuevo_Usuario(modo="Editar ")
         # Obtener la selección actual en la tabla
@@ -297,10 +302,22 @@ class FormularioUsuariosDesign:
         
         # Crear ventana de edición con los datos seleccionados
         self.Ventana_formulario_editar_usuario = tk.Toplevel()
-        self.Ventana_formulario_editar_usuario.title("Editar Usuario")
-        self.Ventana_formulario_editar_usuario.geometry("300x480+1100+400")
+        self.Ventana_formulario_editar_usuario.title(modo.capitalize() +"Editar Usuario")
+        self.Ventana_formulario_editar_usuario.geometry("300x500+550+250")
         self.Ventana_formulario_editar_usuario.configure(bg="white")
 
+        self.Ventana_formulario_editar_usuario.overrideredirect(False)
+
+        # Encabezado de la ventana
+        self.frame_titulo = CTkFrame(
+            self.Ventana_formulario_editar_usuario, fg_color=COLOR_BORDE_ENTRADA
+        )
+        self.frame_titulo.pack(fill="x", pady=10)
+        self.Titulo_pagina = CTkLabel(
+            self.frame_titulo, text=modo.capitalize() + "Usuario", font=("Arial", 20)
+        )
+        self.Titulo_pagina.pack(pady=10)
+        
         # Configurar el formulario de edición
         self.label_nombre = CTkLabel(
             self.Ventana_formulario_editar_usuario,
