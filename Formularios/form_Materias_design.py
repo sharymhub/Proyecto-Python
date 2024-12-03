@@ -83,17 +83,21 @@ class FormularioMateriasDesign:
         )
         self.Btn_EliminarMateria.image = icon
         self.Btn_EliminarMateria.pack(side=tk.LEFT, padx=10, pady=10)
-
+        
         # Contenedor para la tabla de materias
         self.formtabla = tk.LabelFrame(panel_principal, background='purple')
-        self.formtabla.pack(side=tk.LEFT, padx=10, pady=10)
+        self.formtabla.pack(side=tk.LEFT, padx=10, pady=10, fill=tk.BOTH, expand=True)  # Ajuste para que se expanda
 
         # Tabla para mostrar las materias
         self.tabla = ttk.Treeview(self.formtabla, columns=["Nombre", "idProfesor"], show="headings")
-        self.tabla.grid(column=0, row=0, padx=5, pady=5)
+        self.tabla.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)  # Ajustar con sticky para expandir
         self.tabla.heading("Nombre", text="Nombre")
         self.tabla.heading("idProfesor", text="Profesor")
-        self.tabla.column("Nombre", width=120)
+        self.tabla.column("Nombre", width=120, stretch=tk.YES)  # Ajustar para que la columna se estire
+
+        # Asegurarse de que la tabla se expanda cuando la ventana cambie de tamaño
+        self.formtabla.grid_rowconfigure(0, weight=1)
+        self.formtabla.grid_columnconfigure(0, weight=1)
 
         # Cargar los datos desde la base de datos
         self.cargar_materias()
@@ -195,7 +199,7 @@ class FormularioMateriasDesign:
         self.Titulo_pagina = CTkLabel(
             self.frame_titulo, text=modo.capitalize() + " Materia", font=("Arial", 20)
         )
-        self.Titulo_pagina.pack(pady=10)
+        self.Titulo_pagina.pack(pady=10, padx=10)
 
         # Campo: Nombre de Materia
         self.label_materia = CTkLabel(
@@ -204,7 +208,7 @@ class FormularioMateriasDesign:
             text_color=COLOR_TEXTO,
             font=("Arial", 16, "bold"),
         )
-        self.label_materia.pack(anchor="w", padx=20)
+        self.label_materia.pack(anchor="w", padx=20, pady=10)
         self.entry_materia = CTkEntry(
             self.Ventana_formulario_nueva_materia,
             width=250,

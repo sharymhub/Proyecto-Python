@@ -114,44 +114,23 @@ class FormEstudiantesDesign:
             compound="right",
         )
         self.btn_search.grid(row=1, column=4, sticky="w", padx=(0,10), pady=5)
-
-         # Botón "Inhabilitados"
-        #self.btn_inhabilitados = CTkButton(
-        #    self.barra_superior,
-        #    text="Inhabilitados",
-        #    command=self.ver_inhabilitados,  # Define este método más abajo
-        #    fg_color="#CDCDCD", 
-        #    text_color="#65558F",
-        #    hover_color= "#B3A6D6"
-        #)
-        #self.btn_inhabilitados.grid(row=0, column=5, sticky="e", padx=30, pady=5)
         
         self.cuerpo_estudiantes = tk.Frame(self.panel_principal, background="white")
         self.cuerpo_estudiantes.pack(side=tk.TOP, fill=tk.X, expand=False)
        
-        # Boton ver más +
-        self.btn_ver_mas = CTkButton(
-            self.cuerpo_estudiantes,
-            text="Ver más +",
-            fg_color="#65558F",  # Color del botón
-            text_color="white",
-            hover_color="#B3A6D6",# Color al pasar el mouse
-            command= self.vista_detallada,
-            font=("Arial", 12),
-        )
-        self.btn_ver_mas.pack(side=tk.RIGHT, padx=10, pady=5)
-        
-        self.formtabla= tk.LabelFrame(panel_principal, background= 'purple')
-        self.formtabla.pack(side=tk.LEFT, padx=10, pady=10)
-         # Tabla para mostrar las materias
-        self.tabla = ttk.Treeview(self.formtabla, columns=["No_identificacion","Nombre","Grado", "TelefonoAcudiente"], show="headings")
-        self.tabla.grid(column=0, row=0, padx=5, pady=5)
+        self.formtabla = tk.LabelFrame(panel_principal, background='purple')
+        self.formtabla.pack(side=tk.LEFT, fill=tk.BOTH, padx=10, pady=10)
+
+        # Definir la tabla para ocupar todo el espacio disponible
+        self.tabla = ttk.Treeview(self.formtabla, columns=["No_identificacion", "Nombre", "Grado", "TelefonoAcudiente"], show="headings")
+        self.tabla.pack(fill=tk.BOTH, expand=True)  # Esto hace que la tabla ocupe todo el espacio disponible
+
+        # Definir las cabeceras de la tabla
         self.tabla.heading("No_identificacion", text="N° Identificación")
         self.tabla.heading("Nombre", text="Nombre")
         self.tabla.heading("Grado", text="Grado")
         self.tabla.heading("TelefonoAcudiente", text="Teléfono Acudiente")
-        
-     # Cargar los datos desde la base de datos
+        # Cargar los datos desde la base de datos
         self.cargar_estudiantes()
         
     def filtrar_por_grado(self):
@@ -272,165 +251,8 @@ class FormEstudiantesDesign:
                 mb.showerror("Error", f"Error al ejecutar consulta: {err}")
             finally:
                 conn.close()
-
-         # Método para manejar inhabilitados
-   # def ver_inhabilitados(self):
-   #     print("Mostrando elementos inhabilitados.")
-   #     conn = self.conectar_mysql()
-   # 
-   #     if conn:
-   #         try:
-   #             cursor = conn.cursor()
-   #             # Consulta basada en otro criterio (ajusta según tu lógica)
-   #             consulta = """
-   #                 SELECT No_identificacion, Nombre, Grado, TelefonoAcudiente
-   #                 FROM estudiantes
-   #                 WHERE Grado IS NULL OR Grado = ''
-   #             """
-   #             cursor.execute(consulta)
-   #             inhabilitados = cursor.fetchall()
-   #             
-   #             # Limpiar la tabla antes de mostrar los datos
-   #             self.tabla.delete(*self.tabla.get_children())
-
-   #             if not inhabilitados:
-   #                 print("No hay estudiantes inhabilitados.")
-   #             else:
-   ##                 # Insertar los datos de estudiantes inhabilitados en la tabla
-   #                 for estudiante in inhabilitados:
-   #                     self.tabla.insert('', 'end', values=(estudiante[0], estudiante[1], estudiante[2], estudiante[3]))#
-
-    #        except mysql.connector.Error as err:
-    #            mb.showerror("Error", f"Error al ejecutar consulta: {err}")
-    #        finally:
-    #            conn.close()
-        
-        
+ 
     
-    def vista_detallada(self):
-        print("Mostrando vista detallada.")
-        #def vista_detallada(self):
-        print("Mostrando vista detallada.")
-        # Obtener el estudiante seleccionado
-         #Abre una nueva ventana con detalles del estudiante seleccionado#
-        item_seleccionado = self.tabla.selection()
-        if not item_seleccionado:
-            mb.showwarning("Advertencia", "Por favor, selecciona un estudiante.")
-            return
-
-        datos_estudiante = self.tabla.item(item_seleccionado, "values")
-        if not datos_estudiante:
-            mb.showerror("Error", "No se pudo obtener la información del estudiante.")
-            return
-
-        # Crear una nueva ventana
-        nueva_ventana = tk.Toplevel()
-        nueva_ventana.title("Vista Detallada")
-        nueva_ventana.geometry("400x300")
-
-        # Etiqueta de título
-        tk.Label(nueva_ventana, text="Vista Detallada", font=("Arial", 20, "bold")).pack(pady=10)
-
-        # Mostrar los detalles del estudiante
-        detalles = [
-            ("N° Identificación", datos_estudiante[0]),
-            ("Nombre", datos_estudiante[1]),
-            ("Grado", datos_estudiante[2]),
-            ("Teléfono Acudiente", datos_estudiante[3]),
-        ]
-
-        for etiqueta, valor in detalles:
-            frame = tk.Frame(nueva_ventana)
-            frame.pack(fill=tk.X, pady=5, padx=20)
-            tk.Label(frame, text=f"{etiqueta}:", font=("Arial", 14, "bold"), width=20, anchor="w").pack(side=tk.LEFT)
-            tk.Label(frame, text=valor, font=("Arial", 14), anchor="w").pack(side=tk.LEFT)
-
-        # Botón para cerrar la ventana
-        tk.Button(nueva_ventana, text="Cerrar", command=nueva_ventana.destroy).pack(pady=20)
-       
-    
-        
-        # <<<<<<<<<<<<<<<<<<<<<<<<<<<< DOCUMENTOS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        # Parte inferior: Frame de documentos
-        # Parte inferior: Frame de documentos
-        #self.frame_documentos = tk.Frame(self.content_frame, bg="white")
-        #self.frame_documentos.pack(padx=10, pady=(5, 5), fill=tk.BOTH, expand=True)
-
-        # Título de la sección de documentos
-       # self.label_documentos = CTkLabel(
-       #     self.frame_documentos,
-       ##     text="Documentos Subidos",
-        #    font=("Arial", 20, "bold"),
-        #    text_color=COLOR_FONT_PURPLE,
-        #)
-        #self.label_documentos.grid(row=0, column=0, padx=10, pady=5, sticky="w")
-
-         # Crear etiquetas y botones de descarga para cada documento
-        #self.crear_documento_descarga(self.frame_documentos, "Tarjeta de identidad:", estudiante["documentos"]["cedula"], 1)
-        #self.crear_documento_descarga(self.frame_documentos, "Registro civil:", estudiante["documentos"]["certificado_nacimiento"], 2)
-        #self.crear_documento_descarga(self.frame_documentos, "Boletines:", estudiante["documentos"]["boletines"], 3)
-        #self.crear_documento_descarga(self.frame_documentos, "Historia clínica:", estudiante["documentos"]["historia_clinica"], 4)
-
-    # Método que crea la etiqueta y el botón de descarga
-    #def crear_documento_descarga(self, frame, label_text, documento_path, row):
-    #    """Crea la etiqueta y el botón de descarga para un documento."""
-    #    fila = tk.Frame(frame, bg="white")
-    #   fila.grid(row=row, column=0, sticky="w", padx=5, pady=2)
-
-         # Etiqueta para el nombre del documento
-    #    label = CTkLabel(fila, font=("Arial", 16), text=label_text, text_color=COLOR_FONT_BLACK)
-    #    label.pack(side=tk.LEFT, padx=5)
-
-         # Botón de descarga
-    #    download_button = CTkButton(fila, 
-    #        text="Descargar", 
-    #        command=lambda path=documento_path: self.descargar_documento(path),
-    #        fg_color="#65558F", 
-    #        text_color="white", 
-    #        hover_color="#B3A6D6"
-    #    )
-    #    download_button.pack(side=tk.LEFT, padx=10)
-
-     # Método para descargar el documento
-    #def descargar_documento(self, path):
-    #    """Método para descargar el archivo del documento."""
-    #    try:
-    #        # Aquí puedes utilizar filedialog para pedir la ubicación donde guardar el archivo
-    #        destino = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF files", "*.pdf")])
-    #        
-    #        if destino:
-    #            # Aquí deberías copiar o mover el archivo de la ruta original a la ruta destino
-    ##            # Usaremos shutil para mover el archivo (asegúrate de importar shutil)
-    #           import shutil
-    #            shutil.copy(path, destino)  # Copia el archivo al destino seleccionado
-    #            mb.showinfo("Éxito", f"Documento descargado en: {destino}")
-    #        else:
-    #            mb.showwarning("Error", "No se seleccionó un destino para guardar el archivo.")
-    #    except Exception as e:
-    #        mb.showerror("Error", f"No se pudo descargar el archivo. Error: {e}")
-
-            
-    #def agregar_label(self, frame, label_text, value_text, row):
-    #    """Agrega una fila con un texto y su valor en el layout utilizando pack."""
-    #    # Contenedor horizontal para el texto y valor
-    #    fila = tk.Frame(frame, bg="white")
-    #    fila.pack(fill=tk.X, padx=5, pady=2)
-
-    ##    # Etiqueta del texto
-     #   label = CTkLabel(
-     #       fila,
-    ##        font=("Arial", 16, "bold"),
-     #       text=label_text,
-     ##       text_color=COLOR_FONT_BLACK,
-      #  )
-     ##   label.pack(side=tk.LEFT, padx=5)
-
-    #    # Etiqueta del valor
-    ##    value = CTkLabel(
-     #       fila, font=("Arial", 16), text=value_text, text_color=COLOR_FONT_BLACK
-     #   )
-     #   value.pack(side=tk.LEFT, padx=5)
-
     # <<<<<<<<<<<<!!!!!!! NO TOCAR !!!!!!!!!!!>>>>>>>
     # Método para redimensionar el canvas
     def on_frame_configure(self, event):
