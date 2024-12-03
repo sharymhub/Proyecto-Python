@@ -126,7 +126,7 @@ class Login:
         
     def VentanaAdmin(self):
         subprocess.Popen(['python','main.py'])
-    def VentanaProfesor(slef):
+    def VentanaProfesor(self):
         subprocess.Popen(['python', 'MainProfesores.py'])
     def validardatos(self):
         #Obtener valores ingresados

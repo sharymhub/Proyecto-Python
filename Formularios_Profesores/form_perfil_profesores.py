@@ -78,22 +78,6 @@ class formularioPerfilProfesores:
             bg_color="red",
             command=lambda: self.editar_profesor(tarjeta),
         )
-        
-        # Frame de Imagen
-        self.frame_imagen = tk.Frame(
-            self.Datos_personales, bg="white", width=400, height=400
-        )
-        self.frame_imagen.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        
-        # Cargar la imagen desde la ruta del diccionario
-        try:
-            img = Image.open(tarjeta[0]["imagen"]).resize((150, 150))
-            img_tk = ImageTk.PhotoImage(img)
-            imagen_label = tk.Label(self.frame_imagen, image=img_tk, background="white")
-            imagen_label.image = img_tk
-            imagen_label.pack(pady=5)
-        except Exception as e:
-            print(f"Error al cargar la imagen: {e}")
 
         # Frame para información del texto
         self.texto_frame = CTkFrame(self.Datos_personales, fg_color="white")
@@ -131,33 +115,6 @@ class formularioPerfilProfesores:
             self.Datos_academicos, "Inicio de contrato:", tarjeta[0]["fecha_contratacion"]
         )
 
-        # Documentos
-        self.documentos = tk.Frame(self.cuerpo_seccion, background="White")
-        self.documentos.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
-
-        self.label_Documentos = CTkLabel(
-            self.documentos,
-            font=("Arial", 24),
-            text="Documentos:",
-            text_color=COLOR_FONT_PURPLE,
-        )
-        self.label_Documentos.grid(row=0, column=0, columnspan=2, sticky="w")
-
-        self.agregar_boton_documento(self.documentos, "Documento de identidad", 1)
-        self.agregar_boton_documento(self.documentos, "Diploma", 2)
-        self.agregar_boton_documento(self.documentos, "Especialización", 3)
-
-        # Botón Eliminar en la esquina inferior derecha
-        self.btn_eliminar_profesor = CTkButton(
-            self.documentos,
-            text="Eliminar Profesor",
-            command=self.eliminar_profesor,
-            width=120,
-            height=30,
-            fg_color="#CA4A4A",
-            text_color="white",
-        )
-        self.btn_eliminar_profesor.place(relx=1.0, rely=1.0, anchor="se", x=-10, y=-10)
 
     def agregar_label(self, frame, label_text, value_text):
         """Agrega una fila con un texto y su valor en el layout utilizando pack."""
@@ -180,24 +137,6 @@ class formularioPerfilProfesores:
         )
         value.pack(side=tk.LEFT, padx=5)
 
-    def agregar_boton_documento(self, frame, label_text, row):
-        """Agrega un botón para cargar documentos en una fila."""
-        label = CTkLabel(
-            frame,
-            font=("Arial", 16, "bold"),
-            text=label_text,
-            text_color=COLOR_FONT_BLACK,
-        )
-        label.grid(row=row, column=0, sticky="w", padx=5, pady=2)
-        boton = CTkButton(
-            frame,
-            text="Cargar documento",
-            command=self.Cargar_documento,
-            fg_color=COLOR_FONT_PURPLE,
-            text_color="white",
-        )
-        boton.grid(row=row, column=1, padx=(50, 10), pady=2)
-
     def editar_profesor(self, tarjeta):
         # Limpiar la ventana y mostrar detalles
         for widget in self.panel_principal.winfo_children():
@@ -211,24 +150,12 @@ class formularioPerfilProfesores:
         self.Datos_personales = tk.Frame(self.formulario, background="white")
         self.Datos_personales.pack(padx=10, pady=(10, 5), fill=tk.BOTH, expand=True)
         
-        # Frame de Imagen
-        self.frame_imagen = tk.Frame(
-            self.Datos_personales, bg="white", width=100, height=100
-        )
-        self.frame_imagen.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        # Botón para cargar imagen
-        btn_cargar_imagen = CTkButton(
-            self.frame_imagen, text="Cargar Foto", command=self.cargar_imagen
-        )
-        btn_cargar_imagen.pack(pady=5)
+        
         # Frame con informacion academica
         self.Datos_academicos = tk.Frame(self.formulario, background="white")
         self.Datos_academicos.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
 
-        # Frame de documentación
-        self.documentos = tk.Frame(self.formulario, background="White")
-        self.documentos.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
 
         # //////////// Secion Datos Personales //////////////
         # Crear un frame dentro del frame para dividir imagen y texto
@@ -425,7 +352,7 @@ class formularioPerfilProfesores:
         self.Numero_documento.grid(column=0, row=6, sticky="w")
 
         # Crear y colocar el selector de fecha
-        cal = DateEntry(
+        self.cal = DateEntry(
             self.texto_frame,
             width=18,
             background=COLOR_FONT_WHITE,
@@ -436,8 +363,8 @@ class formularioPerfilProfesores:
             selectbackground=COLOR_FONT_PURPLE,
             font=("Arial", 10),
         )
-        cal.grid(row=6, column=1, padx=5, pady=10, sticky="ew")
-        cal.set_date(tarjeta[0]["fecha_nacimiento"])
+        self.cal.grid(row=6, column=1, padx=5, pady=10, sticky="ew")
+        self.cal.set_date(tarjeta[0]["fecha_nacimiento"])
         
         self.label_informacion_academica = CTkLabel(
             self.Datos_academicos,
@@ -539,7 +466,7 @@ class formularioPerfilProfesores:
             sticky="w",
         )
 
-        cal_fecha_contratacion = DateEntry(
+        self.cal_fecha_contratacion = DateEntry(
             self.Frame_datosAcademicos,
             width=18,
             background=COLOR_FONT_WHITE,
@@ -550,142 +477,54 @@ class formularioPerfilProfesores:
             selectbackground=COLOR_FONT_PURPLE,
             font=("Arial", 10),
         )
-        cal_fecha_contratacion.grid(row=1, column=2, padx=10, pady=10, sticky="ew")
-        cal_fecha_contratacion.set_date(tarjeta[0]["fecha_contratacion"])
+        self.cal_fecha_contratacion.grid(row=1, column=2, padx=10, pady=10, sticky="ew")
+        self.cal_fecha_contratacion.set_date(tarjeta[0]["fecha_contratacion"])
 
-        # //////////// Secion Documentos //////////////
-
-        self.label_Documentos = CTkLabel(
-            self.documentos,
-            font=("Arial", 26, "bold"),
-            text="Documentos:",
-            text_color=COLOR_FONT_PURPLE,
-        )
-        self.label_Documentos.grid(row=0, column=0)
-
-        # CARGA DE DOCUMENTO DE IDENTIDAD
-        self.label_Documento_identidad = CTkLabel(
-            self.documentos,
-            font=("Arial", 16, "bold"),
-            text="Documento de identidad",
-            text_color=COLOR_FONT_BLACK,
-        )
-        self.label_Documento_identidad.grid(
-            column=0,
-            row=1,
-            padx=10,
-            pady=2,
-            sticky="w",
-        )
-
-        btn_cargar_documento_identidad = CTkButton(
-            self.documentos, text="Cargar documento", command=self.Cargar_documento
-        )
-        btn_cargar_documento_identidad.grid(
-            column=1, row=1, pady=5, padx=(100, 10), sticky="E"
-        )
-
-        # CARGA DE DIPLOMA
-        self.label_DIPLOMA = CTkLabel(
-            self.documentos,
-            font=("Arial", 16, "bold"),
-            text="Diploma",
-            text_color=COLOR_FONT_BLACK,
-        )
-        self.label_DIPLOMA.grid(
-            column=0,
-            row=2,
-            padx=10,
-            pady=2,
-            sticky="w",
-        )
-
-        btn_cargar_diploma = CTkButton(
-            self.documentos, text="Cargar documento", command=self.Cargar_documento
-        )
-        btn_cargar_diploma.grid(column=1, row=2, pady=5, padx=(100, 10), sticky="E")
-
-        # CARGA DE ESPECIALIZACION
-        self.label_especializacion = CTkLabel(
-            self.documentos,
-            font=("Arial", 16, "bold"),
-            text="Documento de identidad",
-            text_color=COLOR_FONT_BLACK,
-        )
-        self.label_especializacion.grid(
-            column=0,
-            row=3,
-            padx=10,
-            pady=2,
-            sticky="w",
-        )
-
-        btn_cargar_especializacion = CTkButton(
-            self.documentos, text="Cargar documento", command=self.Cargar_documento
-        )
-        btn_cargar_especializacion.grid(
-            column=1, row=3, pady=5, padx=(100, 10), sticky="E"
-        )
+        #Frame botones
+        self.frame_botones= CTkFrame(self.formulario, fg_color='white')
+        self.frame_botones.pack(side=tk.BOTTOM, fill=tk.X, pady=10)
         # Botón para guardar cambios
-        self.boton_guardar = CTkButton(self.documentos, text="Guardar cambios", command=lambda: self.guardar_cambios(tarjeta), fg_color=COLOR_FONT_PURPLE, text_color="white")
-        self.boton_guardar.place(relx=1.0, rely=1.0, anchor="se", x=-10, y=-10)
+        self.boton_guardar = CTkButton(
+            self.frame_botones,
+            text="Guardar cambios",
+            command=lambda: self.guardar_cambios(tarjeta),
+            fg_color=COLOR_FONT_PURPLE,
+            text_color="white"
+        )
+        self.boton_guardar.pack(side= tk.RIGHT, padx=10)
 
         # Botón para cancelar la edición
-        self.boton_cancelar = CTkButton(self.documentos, text="Cancelar", command=self.panel_pricipal.destroy, fg_color="gray", text_color="white")
-        self.boton_cancelar.place(relx=1.0, rely=1.0, anchor="se", x=-10, y=-50)
+        self.boton_cancelar = CTkButton(
+            self.frame_botones,
+            text="Cancelar",
+            command=lambda: self.regresar(),
+            fg_color="gray", text_color="white")
+        self.boton_cancelar.pack(side=tk.LEFT, padx=10)
+    
+    def regresar(self):
+        for widget in self.panel_principal.winfo_children():
+            widget.destroy()
+        formularioPerfilProfesores(self.panel_principal)
 
     def guardar_cambios(self, tarjeta):
-        # Aquí puedes guardar los nuevos valores editados
-        tarjeta["nombre"] = self.nombre_entry.get()
-        tarjeta["telefono"] = self.telefono_entry.get()
-        tarjeta["direccion"] = self.direccion_entry.get()
-        tarjeta["correo_electronico"] = self.correo_entry.get()
-        
-        # Limpiar el panel principal para mostrar la vista detallada con los nuevos datos
-        for widget in self.panel_pricipal.winfo_children():
-            widget.destroy()  # Elimina todos los widgets del panel actual
+        # Actualizar datos del diccionario con los valores de los campos
+        tarjeta[0]["nombre"] = self.entry_nombre.get()
+        tarjeta[0]["numero_documento"] = self.entry_numero_documento.get()
+        tarjeta[0]["telefono"] = self.entry_numero_telefono.get()
+        tarjeta[0]["direccion"] = self.entry_direccion.get()
+        tarjeta[0]["correo_electronico"] = self.entry_Correo_electronico.get()
+        tarjeta[0]["fecha_nacimiento"] = self.cal.get_date()
+        tarjeta[0]["grado"] = self.option_Grado_a_cargo.get()
+        tarjeta[0]["materia_dictada"] = self.option_Materias_dictadas.get()
+        tarjeta[0]["fecha_contratacion"] = self.cal_fecha_contratacion.get_date()
 
-        # Llamar a la función que muestra los detalles de la tarjeta, con los datos actualizados
-        self.ventana_detalles(tarjeta)  # Vuelve a mostrar la vista detallada
+        # Limpiar el panel principal
+        for widget in self.panel_principal.winfo_children():
+            widget.destroy()
 
-
-        # Mostrar un mensaje de confirmación
+        # Rehacer la vista inicial con los datos actualizados
+        formularioPerfilProfesores(self.panel_principal)
+    
+        # Mensaje de confirmación
         messagebox.showinfo("Guardado", "Los cambios se han guardado correctamente.")
 
-    def eliminar_profesor(self):
-        messagebox.showwarning("Eliminar", "¿Estás seguro de eliminar este profesor?")
-
-    def Cargar_documento(self):
-        archivo = filedialog.askopenfilename(
-            title="Seleccionar documento",
-            filetypes=[
-                ("Archivos PDF", "*.pdf"),
-                ("Archivos de Texto", "*.txt"),
-                ("Todos los archivos", "*.*"),
-            ],
-        )
-        if archivo:
-            messagebox.showinfo(
-                "Archivo seleccionado", f"Has cargado el archivo:\n{archivo}"
-            )
-        else:
-            messagebox.showerror("Error", "No has seleccionado un archivo.")
-    
-    def cargar_imagen(self):
-        file_path = filedialog.askopenfilename(
-            filetypes=[("Image files", "*.jpg;*.jpeg;*.png")]
-        )
-
-        if file_path:
-            img = Image.open(file_path).resize((150, 150))
-            img = ImageTk.PhotoImage(img)
-
-            self.img_referencia = img
-            # Label para mostrar la imagen
-            if hasattr(self, "label_imagen"):
-                self.label_imagen.config(image=img)
-                self.label_imagen.image = img  # Guardar referencia de la imagen
-            else:
-                self.label_imagen = tk.Label(self.frame_imagen, image=img, bg="white")
-                self.label_imagen.image = img  # Guardar referencia de la imagen
-                self.label_imagen.pack(pady=10)

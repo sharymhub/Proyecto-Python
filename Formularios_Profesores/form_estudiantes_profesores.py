@@ -1,8 +1,9 @@
 import tkinter as tk
+from tkinter import ttk
 from util.util_imagenes import leer_imagen
 from tkcalendar import DateEntry
 from tkinter import filedialog
-from tkinter import messagebox
+from tkinter import messagebox as mb
 from tkinter import StringVar
 import re
 from PIL import Image, ImageTk
@@ -26,57 +27,8 @@ from customtkinter import (
     CTkImage,
     CTkRadioButton,
 )
-
-estudiante = {
-    "Datos personales" :{
-        "nombre": "Juan Pérez",
-        "edad": 16,
-        "fecha_nacimiento": "2008-03-15",
-        "sexo": "Masculino",
-        "direccion": "Calle Ficticia 123, Ciudad X",
-        "telefono": "123-456-7890",
-        "correo": "juan.perez@email.com",
-        "imagen": "Assets/prueba1.jpg"
-    },
-    "padre": {
-        "nombre": "Carlos Pérez",
-        "edad": 42,
-        "ocupacion": "Ingeniero",
-        "telefono": "987-654-3210",
-        "correo": "carlos.perez@email.com",
-        "direccion": "Calle Ficticia 123, Ciudad X"
-    },
-    "madre": {
-        "nombre": "Ana Martínez",
-        "edad": 40,
-        "ocupacion": "Docente",
-        "telefono": "876-543-2109",
-        "correo": "ana.martinez@email.com",
-        "direccion": "Calle Ficticia 123, Ciudad X"
-    },
-    "informacion_medica": {
-        "tipo_sangre": "O+",
-        "alergias": ["Polen", "Cacahuates"],
-        "enfermedades": ["Asma", "Rinitis alérgica"],
-        "medicamentos": ["Inhalador salbutamol", "Antihistamínicos"],
-        "discapacidad_fisica": "No",
-        "discapacidad_mental": "No"
-        
-    },
-    "acudiente": {
-        "nombre": "María González",
-        "relacion": "Tía materna",
-        "telefono": "555-123-4567",
-        "correo": "maria.gonzalez@email.com",
-        "direccion": "Calle Ficticia 456, Ciudad X"
-    },
-    "documentos": {
-        "cedula": "ruta/a/documentos/cedula_juan_perez.pdf",
-        "certificado_nacimiento": "ruta/a/documentos/certificado_nacimiento_juan_perez.pdf",
-        "boletines": "ruta/a/documentos/boletines_juan_perez.pdf",
-        "historia_clinica": "ruta/a/documentos/historia_clinica_juan_perez.pdf"
-    }
-}
+import mysql.connector
+from mysql.connector import Error
 
 
 class FormEstudiantesVistaProfesor:
@@ -99,6 +51,7 @@ class FormEstudiantesVistaProfesor:
         self.barra_superior.grid_columnconfigure(2, weight=1)  # Espaciador
         self.barra_superior.grid_columnconfigure(3, weight=2)  # Barra de búsqueda
         self.barra_superior.grid_columnconfigure(4, weight=1)  # Botón "Buscar"
+        self.barra_superior.grid_columnconfigure(5, weight=1)  # Botón "Inhabilitados"
                 
         # Sección de selección de grado
         self.lbl_grade_select = CTkLabel(
@@ -108,8 +61,8 @@ class FormEstudiantesVistaProfesor:
             text_color=COLOR_FONT_BLACK,
         )
         self.lbl_grade_select.grid(row=0, column=0, columnspan=2, sticky="w", padx=20)
-
-        self.grades = ["Grado 1°", "Grado 2°", "Grado 3°"]
+        
+        self.grades = ["Ninguno", "1","2","3","4","5"]
         self.grade_var = tk.StringVar(value=self.grades[0])
         self.filtar_grado = CTkOptionMenu(
             self.barra_superior,
@@ -125,11 +78,12 @@ class FormEstudiantesVistaProfesor:
             dropdown_text_color=COLOR_FONT_BLACK,
         )
         self.filtar_grado.grid(row=1, column=0, sticky="w", padx=20, pady=5)
+        self.filtar_grado.configure(command= lambda _: self.filtrar_por_grado())
         
         # Barra de búsqueda
         self.lbl_search = CTkLabel(
             self.barra_superior,
-            text="Buscar:",
+            text="Buscar por Nombre o N°identificación:",
             font=("Arial", 14),
             text_color=COLOR_FONT_BLACK,
         )
@@ -159,327 +113,145 @@ class FormEstudiantesVistaProfesor:
             compound="right",
         )
         self.btn_search.grid(row=1, column=4, sticky="w", padx=(0,10), pady=5)
-
         
         self.cuerpo_estudiantes = tk.Frame(self.panel_principal, background="white")
         self.cuerpo_estudiantes.pack(side=tk.TOP, fill=tk.X, expand=False)
        
-        # Boton ver más +
-        self.btn_ver_mas = CTkButton(
-            self.cuerpo_estudiantes,
-            text="Ver más +",
-            fg_color="#65558F",  # Color del botón
-            text_color="white",
-            hover_color="#B3A6D6",# Color al pasar el mouse
-            command=lambda: self.vista_detallada(estudiante),
-            font=("Arial", 12),
-        )
-        self.btn_ver_mas.pack(side=tk.RIGHT, padx=10, pady=5)
+        self.formtabla = tk.LabelFrame(panel_principal, background='purple')
+        self.formtabla.pack(side=tk.LEFT, fill=tk.BOTH, padx=10, pady=10)
+
+        # Definir la tabla para ocupar todo el espacio disponible
+        self.tabla = ttk.Treeview(self.formtabla, columns=["No_identificacion", "Nombre", "Grado", "TelefonoAcudiente"], show="headings")
+        self.tabla.pack(fill=tk.BOTH, expand=True)  # Esto hace que la tabla ocupe todo el espacio disponible
+
+        # Definir las cabeceras de la tabla
+        self.tabla.heading("No_identificacion", text="N° Identificación")
+        self.tabla.heading("Nombre", text="Nombre")
+        self.tabla.heading("Grado", text="Grado")
+        self.tabla.heading("TelefonoAcudiente", text="Teléfono Acudiente")
+        # Cargar los datos desde la base de datos
+        self.cargar_estudiantes()
         
+    def filtrar_por_grado(self):
+        grado_seleccionado = self.grade_var.get()  # Obtener el grado seleccionado
+        conn = self.conectar_mysql()
+        
+        if conn:
+            try:
+                cursor = conn.cursor()
+                
+                if grado_seleccionado == "Ninguno":
+                    # Mostrar todos los estudiantes si se selecciona "Ninguno"
+                    consulta = """
+                        SELECT No_identificacion, Nombre, Grado, TelefonoAcudiente
+                        FROM estudiantes
+                    """
+                    cursor.execute(consulta)
+                else:
+                    # Filtrar por el grado seleccionado
+                    consulta = """
+                        SELECT No_identificacion, Nombre, Grado, TelefonoAcudiente
+                        FROM estudiantes
+                        WHERE Grado = %s
+                    """
+                    cursor.execute(consulta, (grado_seleccionado,))
+                
+                estudiantes = cursor.fetchall()
+                
+                # Limpiar la tabla antes de insertar los datos
+                self.tabla.delete(*self.tabla.get_children())
+
+                if not estudiantes:
+                    print(f"No se encontraron estudiantes en {grado_seleccionado}.")
+                else:
+                    # Insertar los datos filtrados en la tabla
+                    for estudiante in estudiantes:
+                        self.tabla.insert('', 'end', values=(estudiante[0], estudiante[1], estudiante[2], estudiante[3]))
+            
+            except mysql.connector.Error as err:
+                mb.showerror("Error", f"Error al ejecutar consulta: {err}")
+            finally:
+                conn.close()
+    def cargar_estudiantes(self):  
+        conn = self.conectar_mysql()
+        if conn:
+            try:
+                cursor = conn.cursor()
+                cursor.execute("SELECT No_identificacion, Nombre, Grado, TelefonoAcudiente FROM estudiantes")
+                alumnos = cursor.fetchall()
+
+                if not alumnos:
+                    print("No se encontraron estudiantes.")
+                else:
+                    print("Estudiantes encontrados:", alumnos)
+
+                # Limpiar la tabla antes de insertar nuevos datos
+                self.tabla.delete(*self.tabla.get_children())
+
+                # Insertar los datos en la tabla
+                for materia in alumnos:
+                    self.tabla.insert('', 'end', values=(materia[0], materia[1], materia[2], materia[3])) 
+
+            except mysql.connector.Error as err:
+                mb.showerror("Error", f"Error al ejecutar consulta: {err}")
+            finally:
+                conn.close()
+    def conectar_mysql(self):
+        try:
+            conn = mysql.connector.connect(
+                host="localhost", user="root", password="", database="giebd"
+            )
+            return conn
+        except mysql.connector.Error as err:
+            mb.showerror("Error de conexión", f"Error al conectar con la base de datos: {err}")
+            return None
+        except Exception as e:
+            mb.showerror("Error desconocido", f"Ocurrió un error inesperado: {e}")
+            return None
         
         # Método para realizar búsqueda
     def realizar_busqueda(self):
-        termino = self.search_var.get().strip()
-        if termino:
-            print(f"Buscando: {termino}")
-            # Agrega aquí la lógica para buscar
-        else:
-            print("Por favor, ingrese un término para buscar.")
-
-        # Método para manejar inhabilitados
-
-    def vista_detallada(self, estudiante):
-        print("Mostrando vista detallada.")
-        # Limpiar el panel principal para mostrar la vista detallada con los nuevos datos
-        for widget in self.panel_principal.winfo_children():
-            widget.destroy()  # Elimina todos los widgets del panel actual
-            
-        # Crear un contenedor principal con Canvas y Scrollbar
-        self.canvas_frame = tk.Frame(self.panel_principal, bg="white")
-        self.canvas_frame.pack(fill=tk.BOTH, expand=True)
-
-        self.canvas = tk.Canvas(self.canvas_frame, bg="white", highlightthickness=0)
-        self.scrollbar = tk.Scrollbar(
-            self.canvas_frame, orient=tk.VERTICAL, command=self.canvas.yview
-        )
-        self.canvas.configure(yscrollcommand=self.scrollbar.set)
-
-        self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-        self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-
-        # Frame interior que contendrá todo el contenido
-        self.content_frame = tk.Frame(self.canvas, bg="white")
-        self.canvas.create_window((0, 0), window=self.content_frame, anchor="nw")
-
-        # Vincular el evento para redimensionar y ajustar el Canvas
-        self.content_frame.bind("<Configure>", self.on_frame_configure)
-        self.canvas.bind("<Configure>", self.on_canvas_configure)
+        termino = self.search_var.get().strip()  # Obtiene el término de búsqueda
+        conn = self.conectar_mysql()
         
-        # Barra superior
-        self.barra_superior = tk.Frame(self.content_frame, background="white")
-        self.barra_superior.pack(side=tk.TOP, fill=tk.X, expand=False)
-        
+        if conn:
+            try:
+                cursor = conn.cursor()
+                
+                if termino:
+                    # Consulta con filtro de búsqueda
+                    consulta = """
+                        SELECT No_identificacion, Nombre, Grado, TelefonoAcudiente 
+                        FROM estudiantes
+                        WHERE No_identificacion LIKE %s 
+                        OR Nombre LIKE %s
+                        OR Grado LIKE %s
+                        OR TelefonoAcudiente LIKE %s
+                    """
+                    cursor.execute(consulta, (f"%{termino}%", f"%{termino}%", f"%{termino}%", f"%{termino}%"))
+                else:
+                    # Consulta sin filtro
+                    consulta = "SELECT No_identificacion, Nombre, Grado, TelefonoAcudiente FROM estudiantes"
+                    cursor.execute(consulta)
+                
+                alumnos = cursor.fetchall()
+                
+                # Limpiar la tabla antes de insertar nuevos datos
+                self.tabla.delete(*self.tabla.get_children())
 
-        # Título
-        self.lbl_title = CTkLabel(
-            self.barra_superior,
-            text="Vista detallada",
-            font=("Arial", 28, "bold"),
-            text_color=COLOR_FONT_PURPLE,
-        )
-        self.lbl_title.grid(row=0, column=0, padx=20, pady=10)
+                if not alumnos:
+                    print("No se encontraron estudiantes.")
+                else:
+                    # Insertar los datos en la tabla
+                    for materia in alumnos:
+                        self.tabla.insert('', 'end', values=(materia[0], materia[1], materia[2], materia[3]))
 
-        # Grado al que pertenece
-        self.lbl_grade_select = CTkLabel(
-            self.barra_superior,
-            text="Grado al que está matriculado:",
-            font=("Arial", 16, "bold"),
-            text_color=COLOR_FONT_BLACK,
-        )
-        self.lbl_grade_select.grid(row=1, column=0, sticky="w", padx=15)
-        
-        self.lbl_grade = CTkLabel(
-            self.barra_superior,
-            text="XXX",
-            font=("Arial", 16),
-            text_color=COLOR_FONT_BLACK,
-        )
-        self.lbl_grade.grid(row=2, column=0, padx=10, pady=5)
-
-        # Fecha de inicio del año
-        self.label_Inicio_Año = CTkLabel(
-            self.barra_superior,
-            font=("Arial", 16, "bold"),
-            text="Fecha de Inicio del año:",
-            text_color=COLOR_FONT_BLACK,
-        )
-        self.label_Inicio_Año.grid(
-            column=2,
-            row=1,
-            padx=15,
-            pady=2,
-            sticky="w",
-        )
-
-        cal_Inicio_año = CTkLabel(
-            self.barra_superior,
-            font=("Arial", 16),
-            text="XXX",
-            text_color=COLOR_FONT_BLACK,
-        ) 
-        cal_Inicio_año.grid(row=2, column=2, padx=15, pady=10, sticky="w")
-
-        # <<<<<<<<<<<<<<<<<<<<<<<<<<< SECCION DATOS PERSONALES DEL ESTUDIANTE>>>>>>>>>>>>>>><<<<
-        # Datos personales del estudiante
-        self.Datos_personales = tk.Frame(self.content_frame, background="white")
-        self.Datos_personales.pack(padx=10, pady=(10, 0), fill=tk.BOTH, expand=True)
-
-        # Frame de Imagen
-        self.frame_imagen = tk.Frame(
-            self.Datos_personales, bg="white", width=100, height=100
-        )
-        self.frame_imagen.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        
-        # Verifica si la ruta de la imagen existe y carga la imagen
-        try:
-            imagen_estudiante = Image.open(estudiante["Datos personales"]["imagen"])
-            imagen_estudiante.thumbnail((100, 100))  # Ajusta el tamaño de la imagen
-            img = ImageTk.PhotoImage(imagen_estudiante)
-            imagen_label = CTkLabel(self.frame_imagen, image=img, text="")
-            imagen_label.image = img  # Guardar una referencia de la imagen
-            imagen_label.pack()
-        except Exception as e:
-            print(f"Error al cargar la imagen: {e}")
-            imagen_label = CTkLabel(self.frame_imagen, text="Imagen no disponible")
-            imagen_label.pack()
-        
-        # Frame para información del texto
-        self.texto_frame = CTkFrame(self.Datos_personales, fg_color="white")
-        self.texto_frame.pack(side=tk.LEFT, fill=tk.BOTH, padx=10, expand=True)
-
-        # Agregar etiquetas con los datos personales del estudiante
-        self.agregar_label(self.texto_frame, "Nombre:", estudiante["Datos personales"]["nombre"], 0)
-        self.agregar_label(self.texto_frame, "Edad:", estudiante["Datos personales"]["edad"], 1)
-        self.agregar_label(self.texto_frame, "Fecha de nacimiento:", estudiante["Datos personales"]["fecha_nacimiento"], 2)
-        self.agregar_label(self.texto_frame, "Sexo:", estudiante["Datos personales"]["sexo"], 3)
-        self.agregar_label(self.texto_frame, "Dirección:", estudiante["Datos personales"]["direccion"], 4)
-        self.agregar_label(self.texto_frame, "Teléfono:", estudiante["Datos personales"]["telefono"], 5)
-        self.agregar_label(self.texto_frame, "Correo:", estudiante["Datos personales"]["correo"], 6)
-        
-        # <<<<<<<<<<<<<<<<<<<<<<<<<<< SECCION INFORMACION MEDICA  >>>>>>>>>>>>>><<<<
-        self.Datos_medicos = tk.Frame(self.content_frame, background="white")
-        self.Datos_medicos.pack(padx=10, pady=(10, 5), fill=tk.BOTH, expand=True)
-
-        self.label_Informacion = CTkLabel(
-            self.Datos_medicos,
-            text="Información Medica",
-            font=("Arial", 28, "bold"),
-            text_color=COLOR_FONT_PURPLE,
-        )
-        self.label_Informacion.grid(row=0, column=0, padx=10, pady=5)
-
-        self.frame_izquierda = tk.Frame(self.Datos_medicos, background="white")
-        self.frame_izquierda.grid(padx=5, pady=(5, 5), sticky="w", row=1, column=0)
-        
-        self.frame_derecha = tk.Frame(self.Datos_medicos, background="white")
-        self.frame_derecha.grid(padx=5, pady=(5, 5), sticky="e", row=1, column=1)
-        
-        self.agregar_label(self.frame_izquierda, "Alergias:", estudiante["informacion_medica"]["alergias"], 1)
-        self.agregar_label(self.frame_izquierda, "Enfermedades Crónicas:", estudiante["informacion_medica"]["enfermedades"], 2)
-        self.agregar_label(self.frame_izquierda, "Medicamentos:", estudiante["informacion_medica"]["medicamentos"], 3)
-        self.agregar_label(self.frame_derecha, "Discapacidad Mental:", estudiante["informacion_medica"]["discapacidad_mental"], 1)
-        self.agregar_label(self.frame_derecha, "Discapacidad Fisica:", estudiante["informacion_medica"]["discapacidad_fisica"],2)
-        self.agregar_label(self.frame_derecha, "Tipo de sangre:", estudiante["informacion_medica"]["tipo_sangre"], 3)
-        
-        # <<<<<<<<<<<<<<<<<<<<<<<<<<<< SECCIÓN ACUDIENTE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        # Frame para los datos del acudiente
-        self.frame_acudiente = tk.Frame(self.content_frame, background="white")
-        self.frame_acudiente.pack(padx=10, pady=(5, 5), fill=tk.BOTH, expand=True)
-        
-        self.info_acudiente_label = CTkLabel(
-            self.frame_acudiente,
-            text="Información del Acudiente",
-            font=("Arial", 28, "bold"),
-            text_color=COLOR_FONT_PURPLE,
-        )
-        self.info_acudiente_label.pack(padx=5, pady=5)
-        
-        self.agregar_label(self.frame_acudiente, "Nombre:", estudiante["acudiente"]["nombre"], 0)
-        self.agregar_label(self.frame_acudiente, "Relación con el menor:", estudiante["acudiente"]["relacion"], 1)
-        self.agregar_label(self.frame_acudiente, "Telefono:", estudiante["acudiente"]["telefono"], 2)
-        self.agregar_label(self.frame_acudiente, "Correo:", estudiante["acudiente"]["correo"], 3)
-        self.agregar_label(self.frame_acudiente, "Dirección:", estudiante["acudiente"]["direccion"], 4)
-        
-        # <<<<<<<<<<<<<<<<<<<<<<<<<<< SECCIÓN DE COMENTARIOS >>>>>>>>>>>>>>>>>>>>>>>>>>
-        self.frame_comentarios = tk.Frame(self.content_frame, background="white")
-        self.frame_comentarios.pack(padx=10, pady=(10, 10), fill=tk.BOTH, expand=True)
-
-        # Título
-        self.label_comentarios = CTkLabel(
-            self.frame_comentarios,
-            text="Comentarios",
-            font=("Arial", 28, "bold"),
-            text_color=COLOR_FONT_PURPLE,
-        )
-        self.label_comentarios.pack(pady=(0, 10))
-
-        # Entrada de texto para comentarios
-        self.entry_comentario = CTkEntry(
-            self.frame_comentarios,
-            placeholder_text="Escribe tu comentario aquí...",
-            width=600,
-            height=60,
-            font=("Arial", 14),
-            fg_color="#f0f0f0",
-            text_color=COLOR_FONT_BLACK,
-        )
-        self.entry_comentario.pack(pady=(0, 10))
-
-        # Botón para guardar comentario
-        self.btn_guardar_comentario = CTkButton(
-            self.frame_comentarios,
-            text="Guardar Comentario",
-            fg_color=COLOR_FONT_PURPLE,
-            text_color="white",
-            hover_color="#B3A6D6",
-            command=self.guardar_comentario,
-            font=("Arial", 12),
-        )
-        self.btn_guardar_comentario.pack(pady=(0, 10))
-
-        # Frame para mostrar comentarios guardados
-        self.frame_lista_comentarios = tk.Frame(self.frame_comentarios, background="white")
-        self.frame_lista_comentarios.pack(fill=tk.BOTH, expand=True)
-
-    # Método para guardar comentarios
-    def guardar_comentario(self):
-        comentario = self.entry_comentario.get().strip()
-        if comentario:
-            from datetime import datetime
-            fecha_hora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-            # Contenedor individual para el comentario
-            comentario_frame = CTkFrame(
-                self.frame_lista_comentarios,
-                fg_color="#f0f0f0",
-                corner_radius=10,
-                border_color="#cccccc",
-                border_width=1
-            )
-            comentario_frame.pack(pady=5, padx=10, fill=tk.X)
-
-            # Mostrar fecha y hora
-            label_fecha = CTkLabel(
-                comentario_frame,
-                text=f"{fecha_hora}",
-                font=("Arial", 10, "italic"),
-                text_color="#777"
-            )
-            label_fecha.pack(anchor="w", pady=(5, 0), padx=10)
-
-            # Mostrar el texto del comentario
-            label_texto = CTkLabel(
-                comentario_frame,
-                text=comentario,
-                font=("Arial", 12),
-                text_color="#333",
-                wraplength=350,
-                anchor="w",
-                justify="left"
-            )
-            label_texto.pack(anchor="w", pady=(0, 10), padx=10)
-            # Botón para eliminar el comentario
-            btn_eliminar = CTkButton(
-                comentario_frame,
-                text="Eliminar",
-                fg_color="#FF4D4D",
-                text_color="white",
-                hover_color="#FF9999",
-                command=lambda: self.eliminar_comentario(comentario_frame),
-                font=("Arial", 10)
-            )
-            btn_eliminar.pack(anchor="e", padx=10, pady=(0, 10))
-
-            # Mostrar mensaje de confirmación
-            messagebox.showinfo("Comentario Guardado", "El comentario ha sido guardado exitosamente.")
-            # Limpiar el Entry después de guardar el comentario
-            self.entry_comentario.delete(0, tk.END)
-        else:
-            messagebox.showwarning("Advertencia", "El comentario no puede estar vacío.")
-            
-    # Método para confirmar y eliminar un comentario
-    def eliminar_comentario(self, comentario_frame):
-        respuesta = messagebox.askquestion(
-            "Confirmar Eliminación",
-            "¿Estás seguro de que deseas eliminar este comentario?"
-        )
-        if respuesta == "yes":
-            comentario_frame.destroy()
-            messagebox.showinfo("Comentario Eliminado", "El comentario ha sido eliminado.")
-
-        
-            
-    def agregar_label(self, frame, label_text, value_text, row):
-        """Agrega una fila con un texto y su valor en el layout utilizando pack."""
-        # Contenedor horizontal para el texto y valor
-        fila = tk.Frame(frame, bg="white")
-        fila.pack(fill=tk.X, padx=5, pady=2)
-
-        # Etiqueta del texto
-        label = CTkLabel(
-            fila,
-            font=("Arial", 16, "bold"),
-            text=label_text,
-            text_color=COLOR_FONT_BLACK,
-        )
-        label.pack(side=tk.LEFT, padx=5)
-
-        # Etiqueta del valor
-        value = CTkLabel(
-            fila, font=("Arial", 16), text=value_text, text_color=COLOR_FONT_BLACK
-        )
-        value.pack(side=tk.LEFT, padx=5)
-
+            except mysql.connector.Error as err:
+                mb.showerror("Error", f"Error al ejecutar consulta: {err}")
+            finally:
+                conn.close()
+ 
+    
     # <<<<<<<<<<<<!!!!!!! NO TOCAR !!!!!!!!!!!>>>>>>>
     # Método para redimensionar el canvas
     def on_frame_configure(self, event):
@@ -500,5 +272,8 @@ class FormEstudiantesVistaProfesor:
         # Limpiar el panel principal para mostrar la vista detallada con los nuevos datos
         for widget in self.panel_principal.winfo_children():
             widget.destroy()  # Elimina todos los widgets del panel actual
+        
+        #aun esta en proceso la idea es llamar al formulario matriculas y que desde alla se edite y luego vuelva a estudiantes 
+        #Hay que hacerlo directamente con la base de datos
         
         
